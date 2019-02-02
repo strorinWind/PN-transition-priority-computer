@@ -1,5 +1,7 @@
 package ru.hse.tpc.domain;
 
+import java.util.*;
+
 public class Marking {
 
     public static int OMEGA = -1;
@@ -11,8 +13,44 @@ public class Marking {
         System.arraycopy(marking, 0, this.marking, 0, marking.length);
     }
 
+    public Marking(Marking sourceMarking, Map<Integer, Integer> transitionResult) {
+        this.marking = new int[sourceMarking.marking.length];
+        for (int i = 0; i < this.marking.length; i++) {
+            this.marking[i] = sourceMarking.getMarking(i) + transitionResult.getOrDefault(i, 0);
+        }
+    }
+
+    public Marking(Marking nonGeneralizedMarking, Set<Integer> placesToGeneralize) {
+        this.marking = new int[nonGeneralizedMarking.marking.length];
+        for (int i = 0; i < this.marking.length; i++) {
+            this.marking[i] = placesToGeneralize.contains(i) ? OMEGA : nonGeneralizedMarking.getMarking(i);
+        }
+    }
+
     public int getMarking(int place) {
         return marking[place];
+    }
+
+    /**
+     * Forms list of places for which the marking should be generalized in case this marking < that marking.
+     * @param thatM - another marking which occurred later in the sequence than this marking
+     * @return list of places if this marking is strictly covered by that
+     */
+    public Optional<Set<Integer>> returnPlacesToGeneralizeIfStrictlyCoveredBy(Marking thatM) {
+        Set<Integer> result = new HashSet<>(this.marking.length);
+        for (int i = 0; i < this.marking.length; i++) {
+            int thisPlaceM = this.marking[i];
+            int thatPlaceM = thatM.getMarking(i);
+            if (thatPlaceM == OMEGA) {
+                continue;
+            }
+            if (thisPlaceM == OMEGA || thisPlaceM > thatPlaceM) {
+                return Optional.empty();
+            } else if (thisPlaceM < thatPlaceM) {
+                result.add(i);
+            }
+        }
+        return Optional.of(result);
     }
 
     @Override
