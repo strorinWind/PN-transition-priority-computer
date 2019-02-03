@@ -41,6 +41,7 @@ public class Transition {
         return new CGVertex(generalize(newMarking, sourceVertex), sourceVertex);
     }
 
+    // move this logic outside of transition
     private Marking generalize(Marking marking, CGVertex parentVertex) {
         CGVertex v = parentVertex;
         while (v != null) {
