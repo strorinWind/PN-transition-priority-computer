@@ -16,7 +16,11 @@ public class Marking {
     public Marking(Marking sourceMarking, Map<Integer, Integer> transitionResult) {
         this.marking = new int[sourceMarking.marking.length];
         for (int i = 0; i < this.marking.length; i++) {
-            this.marking[i] = sourceMarking.getMarking(i) + transitionResult.getOrDefault(i, 0);
+            if (sourceMarking.getMarking(i) != OMEGA){
+                this.marking[i] = sourceMarking.getMarking(i) + transitionResult.getOrDefault(i, 0);
+            } else {
+                this.marking[i] = OMEGA;
+            }
         }
     }
 

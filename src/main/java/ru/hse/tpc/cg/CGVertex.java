@@ -1,4 +1,6 @@
-package ru.hse.tpc.domain;
+package ru.hse.tpc.cg;
+
+import ru.hse.tpc.domain.Marking;
 
 public class CGVertex {
 
