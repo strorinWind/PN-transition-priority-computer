@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public class Transition {
 
     private final String label;
+    // list of pairs (place, pre(t, place))
     private final List<Pair<Integer, Integer>> preList;
     // key = place, value = post(t,place) - pre(t,place)
     private final Map<Integer, Integer> occurrenceResult;
@@ -36,12 +37,6 @@ public class Transition {
         }
         return true;
     }
-
-//    public CGVertex fire(CGVertex sourceVertex) {
-//        Marking sourceM = sourceVertex.getM();
-//        Marking newMarking = new Marking(sourceM, occurrenceResult);
-//        return new CGVertex(generalize(newMarking, sourceVertex), sourceVertex);
-//    }
 
     public Marking fire(Marking m) {
         return new Marking(m, occurrenceResult);

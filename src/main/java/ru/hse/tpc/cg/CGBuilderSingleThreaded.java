@@ -7,19 +7,17 @@ import ru.hse.tpc.domain.Transition;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CGBuilderSingleThreaded implements CGBuilder {
+public class CGBuilderSingleThreaded extends AbstractCGBuilder {
 
     private final List<Transition> transitions;
-    private Map<Marking, Set<ImmutablePair<Transition, Marking>>> graph;
 
     public CGBuilderSingleThreaded(List<Transition> transitions) {
         this.transitions = transitions;
-        this.graph = new HashMap<>();
     }
 
     @Override
     public Map<Marking, Set<ImmutablePair<Transition, Marking>>> build(Marking initialMarking) {
-        graph = new HashMap<>();
+        Map<Marking, Set<ImmutablePair<Transition, Marking>>> graph = new HashMap<>();
         graph.put(initialMarking, new HashSet<>());
         CGVertex root = new CGVertex(initialMarking, null);
         Queue<ImmutablePair<CGVertex, Transition>> workQ = transitions.stream().filter(t -> t.canOccur(initialMarking))
@@ -39,19 +37,6 @@ public class CGBuilderSingleThreaded implements CGBuilder {
                 );
             }
         }
-
         return graph;
-    }
-
-    private Marking generalize(Marking marking, CGVertex parentVertex) {
-        CGVertex v = parentVertex;
-        while (v != null) {
-            Optional<Set<Integer>> placesO = v.getM().returnPlacesToGeneralizeIfStrictlyCoveredBy(marking);
-            if (placesO.isPresent()) {
-                return new Marking(marking, placesO.get());
-            }
-            v = v.getParent();
-        }
-        return marking;
     }
 }
