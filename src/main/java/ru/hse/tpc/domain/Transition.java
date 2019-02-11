@@ -1,12 +1,9 @@
 package ru.hse.tpc.domain;
 
 import org.apache.commons.lang3.tuple.Pair;
-import ru.hse.tpc.cg.CGVertex;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Transition {
@@ -40,23 +37,6 @@ public class Transition {
 
     public Marking fire(Marking m) {
         return new Marking(m, occurrenceResult);
-    }
-
-    // move this logic outside of transition
-    private Marking generalize(Marking marking, CGVertex parentVertex) {
-        CGVertex v = parentVertex;
-        while (v != null) {
-            Optional<Set<Integer>> placesO = v.getM().returnPlacesToGeneralizeIfStrictlyCoveredBy(marking);
-            if (placesO.isPresent()) {
-                return new Marking(marking, placesO.get());
-            }
-            v = v.getParent();
-        }
-        return marking;
-    }
-
-    public String getLabel() {
-        return label;
     }
 
     @Override

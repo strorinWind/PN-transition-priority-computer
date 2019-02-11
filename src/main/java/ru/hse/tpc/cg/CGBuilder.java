@@ -9,6 +9,6 @@ import java.util.Set;
 
 public interface CGBuilder {
 
-    public Map<Marking, Set<ImmutablePair<Transition, Marking>>> build(Marking initialMarking);
+    Map<Marking, Set<ImmutablePair<Transition, Marking>>> build(Marking initialMarking);
 
 }

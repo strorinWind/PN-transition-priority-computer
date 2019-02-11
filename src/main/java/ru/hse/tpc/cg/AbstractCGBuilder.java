@@ -5,7 +5,7 @@ import ru.hse.tpc.domain.Marking;
 import java.util.Optional;
 import java.util.Set;
 
-public abstract class AbstractCGBuilder implements CGBuilder {
+abstract class AbstractCGBuilder implements CGBuilder {
 
     Marking generalize(Marking marking, CGVertex parentVertex) {
         CGVertex v = parentVertex;

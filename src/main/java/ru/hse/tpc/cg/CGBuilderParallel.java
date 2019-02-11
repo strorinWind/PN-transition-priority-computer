@@ -28,12 +28,11 @@ public class CGBuilderParallel extends AbstractCGBuilder {
         List<Future<Boolean>> futures = fjPool.invokeAll(
                 this.transitions.stream().filter(tr -> tr.canOccur(initialMarking))
                         .map(tr -> (Callable<Boolean>) () -> {
-                            System.out.println("FIRST LEVEL TASK: thread - " + Thread.currentThread().getId() + "; transition - " + tr);
+                            //System.out.println("FIRST LEVEL TASK: thread - " + Thread.currentThread().getId() + "; transition - " + tr);
                             new ForkBuild(ImmutablePair.of(root, tr)).compute();
                             return true;
                         }).collect(Collectors.toList())
         );
-        System.out.println("FJPool - " + fjPool.toString());
         for (Future<Boolean> future : futures) {
             try {
                 future.get();
@@ -43,6 +42,7 @@ public class CGBuilderParallel extends AbstractCGBuilder {
                 e.printStackTrace();
             }
         }
+        System.out.println("FJPool - " + fjPool.toString());
         return graph;
     }
 
