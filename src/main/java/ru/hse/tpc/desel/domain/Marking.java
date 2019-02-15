@@ -1,8 +1,8 @@
-package ru.hse.tpc.domain;
+package ru.hse.tpc.desel.domain;
 
 import java.util.*;
 
-public class Marking {
+public class Marking implements Iterable<Integer> {
 
     public static int OMEGA = -1;
 
@@ -57,6 +57,16 @@ public class Marking {
         return Optional.of(result);
     }
 
+    public boolean equalsByBoundedPlaces(Marking anotherMarking) {
+        for (int i = 0; i < this.marking.length; i++) {
+            if (anotherMarking.marking[i] != this.marking[i] &&
+                    (anotherMarking.marking[i] != OMEGA || this.marking[i] != OMEGA)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public boolean equals(Object anotherMarking) {
         if (!(anotherMarking instanceof Marking)) {
@@ -75,7 +85,7 @@ public class Marking {
     public int hashCode() {
         int result = this.marking[0];
         for (int i = 1; i < this.marking.length; i++) {
-            result = 31 * result + this.marking[i];// * i;
+            result = 31 * result + this.marking[i];
         }
         return result;
     }
@@ -92,5 +102,22 @@ public class Marking {
             strB.append(",");
         }
         return strB.deleteCharAt(strB.length() - 1).append(")").toString();
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return new Iterator<Integer>() {
+            private int idx = 0;
+
+            @Override
+            public boolean hasNext() {
+                return idx < marking.length;
+            }
+
+            @Override
+            public Integer next() {
+                return marking[idx++];
+            }
+        };
     }
 }

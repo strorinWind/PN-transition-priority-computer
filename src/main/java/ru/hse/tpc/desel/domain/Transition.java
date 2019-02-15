@@ -1,5 +1,6 @@
-package ru.hse.tpc.domain;
+package ru.hse.tpc.desel.domain;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -37,6 +38,12 @@ public class Transition {
 
     public Marking fire(Marking m) {
         return new Marking(m, occurrenceResult);
+    }
+
+    public Map<Integer, Integer> fireForSpecificPlaces(Map<Integer, Integer> placeToMarkingMap) {
+        return placeToMarkingMap.entrySet().stream()
+                .map(e -> ImmutablePair.of(e.getKey(), e.getValue() + occurrenceResult.getOrDefault(e.getKey(), 0)))
+                .collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight));
     }
 
     @Override

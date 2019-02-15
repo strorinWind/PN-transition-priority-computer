@@ -1,4 +1,4 @@
-package ru.hse.tpc.domain;
+package ru.hse.tpc.desel.domain;
 
 import org.junit.Test;
 

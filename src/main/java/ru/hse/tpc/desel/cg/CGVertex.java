@@ -1,6 +1,6 @@
-package ru.hse.tpc.cg;
+package ru.hse.tpc.desel.cg;
 
-import ru.hse.tpc.domain.Marking;
+import ru.hse.tpc.desel.domain.Marking;
 
 public class CGVertex {
 

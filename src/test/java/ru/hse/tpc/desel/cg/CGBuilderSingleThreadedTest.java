@@ -1,9 +1,9 @@
-package ru.hse.tpc.cg;
+package ru.hse.tpc.desel.cg;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
-import ru.hse.tpc.domain.Marking;
-import ru.hse.tpc.domain.Transition;
+import ru.hse.tpc.desel.domain.Marking;
+import ru.hse.tpc.desel.domain.Transition;
 
 import java.util.*;
 import java.util.stream.Collectors;
