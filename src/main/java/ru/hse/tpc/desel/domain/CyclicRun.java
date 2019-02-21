@@ -26,7 +26,8 @@ public class CyclicRun {
 
     @Override
     public String toString() {
-        return prefix.stream().map(Transition::toString).collect(Collectors.joining("", "", "|")) +
+        String prefixStr = prefix.stream().map(Transition::toString).collect(Collectors.joining("", "", "|"));
+        return ((prefixStr.length() == 1) ? "" : prefixStr) +
                 cycle.stream().map(Transition::toString).collect(Collectors.joining(""));
     }
 }

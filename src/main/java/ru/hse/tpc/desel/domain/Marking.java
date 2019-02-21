@@ -60,7 +60,7 @@ public class Marking implements Iterable<Integer> {
     public boolean equalsByBoundedPlaces(Marking anotherMarking) {
         for (int i = 0; i < this.marking.length; i++) {
             if (anotherMarking.marking[i] != this.marking[i] &&
-                    (anotherMarking.marking[i] != OMEGA || this.marking[i] != OMEGA)) {
+                    (anotherMarking.marking[i] != OMEGA && this.marking[i] != OMEGA)) {
                 return false;
             }
         }

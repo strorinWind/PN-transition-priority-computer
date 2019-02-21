@@ -29,18 +29,15 @@ public class ECNMarking {
         return additionalPlace;
     }
 
-    // TODO: double check because very possibly we need two absolutely equal markings not only by bounded places
-    public boolean equalsByOriginalPlaces(ECNMarking anotherMarking) {
-        return this.originalPlace.equalsByBoundedPlaces(anotherMarking.originalPlace);
-    }
-
-    public boolean equalsByAdditionalPlaces(ECNMarking anotherMarking) {
-        return this.additionalPlace.equals(anotherMarking.additionalPlace);
-    }
-
     private int precomputeHashCode() {
-        int result = originalPlace.hashCode();
-        result = 31 * result + additionalPlace.hashCode();
+        int result = additionalPlace.hashCode();
+        int idx = 0;
+        for (int m : originalPlace) {
+            if (!additionalPlace.containsKey(idx)) {
+                result = 31 * result + m;
+            }
+            idx++;
+        }
         return result;
     }
 
@@ -55,7 +52,7 @@ public class ECNMarking {
             return false;
         }
         ECNMarking that = (ECNMarking) o;
-        return this.additionalPlace.equals(that.additionalPlace) && this.originalPlace.equals(that.originalPlace);
+        return this.additionalPlace.equals(that.additionalPlace) && this.originalPlace.equalsByBoundedPlaces(that.originalPlace);
     }
 
     @Override

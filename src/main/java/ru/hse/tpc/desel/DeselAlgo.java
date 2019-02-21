@@ -6,9 +6,9 @@ import ru.hse.tpc.desel.cg.CGBuilderSingleThreaded;
 import ru.hse.tpc.desel.domain.CyclicRun;
 import ru.hse.tpc.desel.domain.Marking;
 import ru.hse.tpc.desel.domain.Transition;
+import ru.hse.tpc.desel.ecn.BacktrackingECNTraverser;
 import ru.hse.tpc.desel.ecn.ECNMarking;
 import ru.hse.tpc.desel.ecn.ECNTraverser;
-import ru.hse.tpc.desel.ecn.ECNTraverserSingleThreaded;
 
 import java.util.HashSet;
 import java.util.List;
@@ -41,7 +41,7 @@ public class DeselAlgo {
         System.out.println("======================= Additional Places Marking =======================");
         additionalPlacesMarking.forEach((key, value) -> System.out.println(key + " -> " + value));
         System.out.println("=========================================================================");
-        ECNTraverser ecnTraverser = new ECNTraverserSingleThreaded();
+        ECNTraverser ecnTraverser = new BacktrackingECNTraverser();
         return ecnTraverser.findCyclicRuns(cg, new ECNMarking(initialMarking, additionalPlacesMarking));
     }
 

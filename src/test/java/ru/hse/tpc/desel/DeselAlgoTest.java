@@ -4,10 +4,9 @@ import org.junit.Test;
 import ru.hse.tpc.desel.domain.CyclicRun;
 import ru.hse.tpc.desel.domain.Marking;
 import ru.hse.tpc.desel.domain.Transition;
+import ru.hse.tpc.desel.ecn.ECNMarking;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -40,5 +39,16 @@ public class DeselAlgoTest {
         System.out.println("======================= Cyclic Runs =======================");
         cyclicRuns.forEach(System.out::println);
         System.out.println("===========================================================");
+    }
+
+    @Test
+    public void test() {
+        Map<Integer, Integer> am1 = new HashMap<>(1);
+        am1.put(2, 0);
+        ECNMarking m1 = new ECNMarking(new Marking(1,0,0,1,0), am1);
+        Map<Integer, Integer> am2 = new HashMap<>(1);
+        am2.put(2, 0);
+        ECNMarking m2 = new ECNMarking(new Marking(1,0,-1,1,0), am2);
+        assertEquals(m1, m2);
     }
 }
