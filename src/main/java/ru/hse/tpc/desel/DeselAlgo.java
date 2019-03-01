@@ -9,6 +9,7 @@ import ru.hse.tpc.desel.domain.Transition;
 import ru.hse.tpc.desel.ecn.BacktrackingECNTraverser;
 import ru.hse.tpc.desel.ecn.ECNMarking;
 import ru.hse.tpc.desel.ecn.ECNTraverser;
+import ru.hse.tpc.desel.ecn.ECNTraverserImpl;
 
 import java.util.HashSet;
 import java.util.List;
@@ -41,8 +42,9 @@ public class DeselAlgo {
         System.out.println("======================= Additional Places Marking =======================");
         additionalPlacesMarking.forEach((key, value) -> System.out.println(key + " -> " + value));
         System.out.println("=========================================================================");
-        ECNTraverser ecnTraverser = new BacktrackingECNTraverser();
-        return ecnTraverser.findCyclicRuns(cg, new ECNMarking(initialMarking, additionalPlacesMarking));
+        ECNTraverser ecnTraverser = new ECNTraverserImpl();
+        return ecnTraverser.findCyclicRuns(cg, new ECNMarking(initialMarking, additionalPlacesMarking),
+                new HashSet<>(transitions));
     }
 
     private static Set<Integer> findUnboundedPlaces(Set<Marking> markings) {

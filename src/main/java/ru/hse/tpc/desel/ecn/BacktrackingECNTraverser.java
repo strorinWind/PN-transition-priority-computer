@@ -11,7 +11,7 @@ public class BacktrackingECNTraverser implements ECNTraverser {
 
     @Override
     public List<CyclicRun> findCyclicRuns(Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg,
-                                          ECNMarking initialMarking) {
+                                          ECNMarking initialMarking, Set<Transition> transitionSet) {
         List<CyclicRun> cyclicRuns = new ArrayList<>();
         // Stack of pairs (marking, incomingTransition)
         Deque<ImmutablePair<ECNMarking, Transition>> seq = new LinkedList<>();

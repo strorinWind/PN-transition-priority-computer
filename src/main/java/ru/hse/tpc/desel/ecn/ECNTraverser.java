@@ -11,6 +11,6 @@ import java.util.Set;
 
 public interface ECNTraverser {
 
-    List<CyclicRun> findCyclicRuns(Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg, ECNMarking initialMarking);
+    List<CyclicRun> findCyclicRuns(Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg, ECNMarking initialMarking, Set<Transition> transitionSet);
 
 }

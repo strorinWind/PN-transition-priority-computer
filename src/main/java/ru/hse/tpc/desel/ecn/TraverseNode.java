@@ -4,25 +4,29 @@ import ru.hse.tpc.desel.domain.Transition;
 
 public class TraverseNode {
 
-    private final ECNMarking marking;
     private final TraverseNode parent;
-    private final Transition incomingTransition;
+    private final Transition incT;
+    private final ECNMarking marking;
 
-    public TraverseNode(ECNMarking marking, TraverseNode parent, Transition incomingTransition) {
-        this.marking = marking;
-        this.parent = parent;
-        this.incomingTransition = incomingTransition;
+    public TraverseNode(ECNMarking marking) {
+        this(null, null, marking);
     }
 
-    public ECNMarking getMarking() {
-        return marking;
+    public TraverseNode(TraverseNode parent, Transition incT, ECNMarking marking) {
+        this.parent = parent;
+        this.incT = incT;
+        this.marking = marking;
     }
 
     public TraverseNode getParent() {
         return parent;
     }
 
-    public Transition getIncomingTransition() {
-        return incomingTransition;
+    public Transition getIncT() {
+        return incT;
+    }
+
+    public ECNMarking getMarking() {
+        return marking;
     }
 }
