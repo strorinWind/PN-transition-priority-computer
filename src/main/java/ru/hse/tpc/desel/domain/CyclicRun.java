@@ -1,12 +1,9 @@
 package ru.hse.tpc.desel.domain;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class CyclicRun {
+public class CyclicRun implements Iterable<Transition> {
 
     private final List<Transition> prefix;
     private final List<Transition> cycle;
@@ -29,5 +26,28 @@ public class CyclicRun {
         String prefixStr = prefix.stream().map(Transition::toString).collect(Collectors.joining("", "", "|"));
         return ((prefixStr.length() == 1) ? "" : prefixStr) +
                 cycle.stream().map(Transition::toString).collect(Collectors.joining(""));
+    }
+
+    @Override
+    public Iterator<Transition> iterator() {
+        return new Iterator<Transition>() {
+
+            private Iterator<Transition> prefixIter = prefix.iterator();
+            private Iterator<Transition> cycleIter = cycle.iterator();
+
+            @Override
+            public boolean hasNext() {
+                return prefixIter.hasNext() || cycleIter.hasNext();
+            }
+
+            @Override
+            public Transition next() {
+                if (prefixIter.hasNext()) {
+                    return prefixIter.next();
+                } else {
+                    return cycleIter.next();
+                }
+            }
+        };
     }
 }
