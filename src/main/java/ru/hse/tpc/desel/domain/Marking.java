@@ -57,6 +57,20 @@ public class Marking implements Iterable<Integer> {
         return Optional.of(result);
     }
 
+    public boolean isStrictlyCoveredBy(Marking thatM) {
+        boolean isAtLeastOnePlaceStrictlyCovered = false;
+        for (int i = 0; i < this.marking.length; i++) {
+            int thisPlaceM = this.marking[i];
+            int thatPlaceM = thatM.marking[i];
+            if (thisPlaceM > thatPlaceM) {
+                return false;
+            } else if (thisPlaceM < thatPlaceM) {
+                isAtLeastOnePlaceStrictlyCovered = true;
+            }
+        }
+        return isAtLeastOnePlaceStrictlyCovered;
+    }
+
     public boolean equalsByBoundedPlaces(Marking anotherMarking) {
         for (int i = 0; i < this.marking.length; i++) {
             if (anotherMarking.marking[i] != this.marking[i] &&

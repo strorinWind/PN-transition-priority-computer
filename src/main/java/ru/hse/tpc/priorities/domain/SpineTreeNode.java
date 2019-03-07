@@ -3,7 +3,9 @@ package ru.hse.tpc.priorities.domain;
 import ru.hse.tpc.desel.domain.Marking;
 import ru.hse.tpc.desel.domain.Transition;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SpineTreeNode {
@@ -12,6 +14,7 @@ public class SpineTreeNode {
     private final Transition incT;
     private final SpineTreeNode parent;
     private final Map<Transition, SpineTreeNode> childNodes = new HashMap<>();
+    private NodeColor color = NodeColor.NOT_COLORED;
 
     public SpineTreeNode(Marking m) {
         this(m, null, null);
@@ -39,6 +42,14 @@ public class SpineTreeNode {
         childNodes.put(t, node);
     }
 
+    public boolean isLeaf() {
+        return childNodes.isEmpty();
+    }
+
+    public Collection<SpineTreeNode> getChildNodes() {
+        return childNodes.values();
+    }
+
     public boolean containsOutgoingTransition(Transition t) {
         return childNodes.containsKey(t);
     }
@@ -47,13 +58,25 @@ public class SpineTreeNode {
         return childNodes.get(t);
     }
 
+    public void color(NodeColor color) {
+        this.color = color;
+    }
+
+    public NodeColor getColor() {
+        return color;
+    }
+
     @Override
     public String toString() {
         return toString(1);
     }
 
     private String toString(int offset) {
-        StringBuilder sb = new StringBuilder(m.toString()).append("\n");
+        StringBuilder sb = new StringBuilder(m.toString());
+        if (color != NodeColor.NOT_COLORED) {
+            sb.append(" ").append(color);
+        }
+        sb.append("\n");
         for (Map.Entry<Transition, SpineTreeNode> child : childNodes.entrySet()) {
             for (int i = 0; i < offset; i++) {
                 sb.append("  ");
