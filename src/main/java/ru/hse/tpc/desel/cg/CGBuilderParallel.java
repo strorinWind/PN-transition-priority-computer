@@ -1,34 +1,34 @@
 package ru.hse.tpc.desel.cg;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import ru.hse.tpc.desel.domain.Marking;
-import ru.hse.tpc.desel.domain.Transition;
+import ru.hse.tpc.common.Marking;
+import ru.hse.tpc.common.Transition;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+// TODO: refactor
 public class CGBuilderParallel extends AbstractCGBuilder {
 
     private final ForkJoinPool fjPool;
 
-    private final List<Transition> transitions;
     private ConcurrentMap<Marking, Set<ImmutablePair<Transition, Marking>>> graph;
+    private List<Transition> transitions;
 
-    public CGBuilderParallel(ForkJoinPool fjPool, List<Transition> transitions) {
+    public CGBuilderParallel(ForkJoinPool fjPool) {
         this.fjPool = fjPool;
-        this.transitions = transitions;
     }
 
-    public Map<Marking, Set<ImmutablePair<Transition, Marking>>> build(Marking initialMarking) {
+    public Map<Marking, Set<ImmutablePair<Transition, Marking>>> build(Marking initialMarking, List<Transition> transitions) {
         System.out.println("FJPool - " + fjPool.toString());
+        this.transitions = transitions;
         this.graph = new ConcurrentHashMap<>();
         this.graph.put(initialMarking, new HashSet<>());
         CGVertex root = new CGVertex(initialMarking, null);
         List<Future<Boolean>> futures = fjPool.invokeAll(
-                this.transitions.stream().filter(tr -> tr.canOccur(initialMarking))
+                transitions.stream().filter(tr -> tr.canOccur(initialMarking))
                         .map(tr -> (Callable<Boolean>) () -> {
-                            //System.out.println("FIRST LEVEL TASK: thread - " + Thread.currentThread().getId() + "; transition - " + tr);
                             new ForkBuild(ImmutablePair.of(root, tr)).compute();
                             return true;
                         }).collect(Collectors.toList())

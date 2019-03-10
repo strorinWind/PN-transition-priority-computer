@@ -1,0 +1,43 @@
+{
+  "marking": [1, 0, 0, 1, 0],
+  "transitions": [
+    {
+      "label": "a",
+      "preList": [
+        [1, 1]
+      ],
+      "postList": [
+        [0, 1]
+      ]
+    },
+    {
+      "label": "b",
+      "preList": [
+        [0, 1]
+      ],
+      "postList": [
+        [1, 1],
+        [2, 1]
+      ]
+    },
+    {
+      "label": "c",
+      "preList": [
+        [2, 2],
+        [3, 1]
+      ],
+      "postList": [
+        [4, 1]
+      ]
+    },
+    {
+      "label": "d",
+      "preList": [
+        [4, 1]
+      ],
+      "postList": [
+        [3, 1]
+      ]
+    }
+  ]
+}

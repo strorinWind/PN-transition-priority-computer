@@ -1,7 +1,10 @@
 package ru.hse.tpc.desel.cg;
 
-import ru.hse.tpc.desel.domain.Marking;
+import ru.hse.tpc.common.Marking;
 
+/**
+ * Represents a vertex of covering graph
+ */
 public class CGVertex {
 
     private final Marking m;

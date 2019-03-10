@@ -1,12 +1,15 @@
 package ru.hse.tpc.desel.ecn;
 
-import ru.hse.tpc.desel.domain.Marking;
+import ru.hse.tpc.common.Marking;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a marking of Extended Covering Net
+ */
 public class ECNMarking {
 
     private final Marking originalPlace;

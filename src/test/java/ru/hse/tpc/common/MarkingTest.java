@@ -1,6 +1,7 @@
-package ru.hse.tpc.desel.domain;
+package ru.hse.tpc.common;
 
 import org.junit.Test;
+import ru.hse.tpc.common.Marking;
 
 import java.util.Optional;
 import java.util.Set;

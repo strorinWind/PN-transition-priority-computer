@@ -1,6 +1,6 @@
 package ru.hse.tpc.desel.ecn;
 
-import ru.hse.tpc.desel.domain.Transition;
+import ru.hse.tpc.common.Transition;
 
 public class TraverseNode {
 

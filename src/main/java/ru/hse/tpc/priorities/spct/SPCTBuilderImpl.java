@@ -1,10 +1,10 @@
-package ru.hse.tpc.priorities;
+package ru.hse.tpc.priorities.spct;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import ru.hse.tpc.desel.domain.Marking;
-import ru.hse.tpc.desel.domain.Transition;
-import ru.hse.tpc.priorities.domain.NodeColor;
-import ru.hse.tpc.priorities.domain.SpineTreeNode;
+import ru.hse.tpc.common.Marking;
+import ru.hse.tpc.common.Transition;
+import ru.hse.tpc.priorities.common.NodeColor;
+import ru.hse.tpc.priorities.common.SpineTreeNode;
 
 import java.util.*;
 import java.util.stream.Collectors;

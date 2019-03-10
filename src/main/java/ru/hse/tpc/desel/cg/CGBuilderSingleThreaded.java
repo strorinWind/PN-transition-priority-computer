@@ -1,22 +1,16 @@
 package ru.hse.tpc.desel.cg;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import ru.hse.tpc.desel.domain.Marking;
-import ru.hse.tpc.desel.domain.Transition;
+import ru.hse.tpc.common.Marking;
+import ru.hse.tpc.common.Transition;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class CGBuilderSingleThreaded extends AbstractCGBuilder {
 
-    private final List<Transition> transitions;
-
-    public CGBuilderSingleThreaded(List<Transition> transitions) {
-        this.transitions = transitions;
-    }
-
     @Override
-    public Map<Marking, Set<ImmutablePair<Transition, Marking>>> build(Marking initialMarking) {
+    public Map<Marking, Set<ImmutablePair<Transition, Marking>>> build(Marking initialMarking, List<Transition> transitions) {
         Map<Marking, Set<ImmutablePair<Transition, Marking>>> graph = new HashMap<>();
         graph.put(initialMarking, new HashSet<>());
         CGVertex root = new CGVertex(initialMarking, null);

@@ -1,9 +1,9 @@
 package ru.hse.tpc.desel.ecn;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import ru.hse.tpc.desel.domain.CyclicRun;
-import ru.hse.tpc.desel.domain.Marking;
-import ru.hse.tpc.desel.domain.Transition;
+import ru.hse.tpc.common.CyclicRun;
+import ru.hse.tpc.common.Marking;
+import ru.hse.tpc.common.Transition;
 
 import java.util.*;
 import java.util.function.Function;

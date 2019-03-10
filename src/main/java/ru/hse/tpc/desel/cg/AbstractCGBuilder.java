@@ -1,6 +1,6 @@
 package ru.hse.tpc.desel.cg;
 
-import ru.hse.tpc.desel.domain.Marking;
+import ru.hse.tpc.common.Marking;
 
 import java.util.Optional;
 import java.util.Set;

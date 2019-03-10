@@ -1,8 +1,11 @@
-package ru.hse.tpc.desel.domain;
+package ru.hse.tpc.common;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a single cyclic run in a Petri net
+ */
 public class CyclicRun implements Iterable<Transition> {
 
     private final List<Transition> prefix;

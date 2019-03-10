@@ -1,13 +1,15 @@
-package ru.hse.tpc.priorities.domain;
+package ru.hse.tpc.priorities.common;
 
-import ru.hse.tpc.desel.domain.Marking;
-import ru.hse.tpc.desel.domain.Transition;
+import ru.hse.tpc.common.Marking;
+import ru.hse.tpc.common.Transition;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents a spine tree node
+ */
 public class SpineTreeNode {
 
     private final Marking m;

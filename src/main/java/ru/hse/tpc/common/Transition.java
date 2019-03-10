@@ -1,5 +1,7 @@
-package ru.hse.tpc.desel.domain;
+package ru.hse.tpc.common;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -7,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Represents Petri net transition
+ */
 public class Transition {
 
     private final String label;
@@ -15,7 +20,10 @@ public class Transition {
     // key = place, value = post(t,place) - pre(t,place)
     private final Map<Integer, Integer> occurrenceResult;
 
-    public Transition(String label, List<Pair<Integer, Integer>> preList, List<Pair<Integer, Integer>> postList) {
+    @JsonCreator
+    public Transition(@JsonProperty("label") String label,
+                      @JsonProperty("preList") List<Pair<Integer, Integer>> preList,
+                      @JsonProperty("postList") List<Pair<Integer, Integer>> postList) {
         this.label = label;
         this.preList = preList;
         Map<Integer, Integer> postMap = postList.stream().collect(Collectors.toMap(Pair::getLeft, Pair::getRight));

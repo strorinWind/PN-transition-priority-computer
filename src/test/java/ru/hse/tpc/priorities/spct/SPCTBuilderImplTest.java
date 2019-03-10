@@ -1,20 +1,33 @@
-package ru.hse.tpc.desel;
+package ru.hse.tpc.priorities.spct;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.junit.Before;
 import org.junit.Test;
+import ru.hse.tpc.desel.DeselAlgo;
 import ru.hse.tpc.common.CyclicRun;
 import ru.hse.tpc.common.Marking;
 import ru.hse.tpc.common.Transition;
-import ru.hse.tpc.desel.ecn.ECNMarking;
+import ru.hse.tpc.priorities.common.SpineTreeNode;
+import ru.hse.tpc.priorities.spct.SPCTBuilderImpl;
+import ru.hse.tpc.priorities.st.SpineTreeBuilderImpl;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.Assert.*;
+public class SPCTBuilderImplTest {
 
-public class DeselAlgoTest {
-
+    private SpineTreeNode spineTree;
+    private List<Transition> transitions;
 
     @Test
-    public void findCyclicRunsTest() {
+    public void buildTest() {
+        SpineTreeNode coloredSpineTree = new SPCTBuilderImpl().build(spineTree, transitions);
+        System.out.println(coloredSpineTree);
+    }
+
+    @Before
+    public void setUp() {
         Transition a = new Transition("a",
                 Collections.singletonList(ImmutablePair.of(1, 1)),
                 Collections.singletonList(ImmutablePair.of(0, 1)));
@@ -35,20 +48,7 @@ public class DeselAlgoTest {
                 Collections.singletonList(ImmutablePair.of(3, 1)));
 
         Marking initialMarking = new Marking(1,0,0,1,0);
-        List<CyclicRun> cyclicRuns = DeselAlgo.findCyclicRuns(Arrays.asList(a, b, c, d), initialMarking);
-        System.out.println("======================= Cyclic Runs =======================");
-        cyclicRuns.forEach(System.out::println);
-        System.out.println("===========================================================");
-    }
-
-    @Test
-    public void test() {
-        Map<Integer, Integer> am1 = new HashMap<>(1);
-        am1.put(2, 0);
-        ECNMarking m1 = new ECNMarking(new Marking(1,0,0,1,0), am1);
-        Map<Integer, Integer> am2 = new HashMap<>(1);
-        am2.put(2, 0);
-        ECNMarking m2 = new ECNMarking(new Marking(1,0,-1,1,0), am2);
-        assertEquals(m1, m2);
+        List<CyclicRun> cyclicRuns = DeselAlgo.findCyclicRuns((this.transitions = Arrays.asList(a, b, c, d)), initialMarking);
+        this.spineTree = new SpineTreeBuilderImpl().build(initialMarking, cyclicRuns);
     }
 }

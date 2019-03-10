@@ -1,13 +1,19 @@
-package ru.hse.tpc.desel.domain;
+package ru.hse.tpc.common;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.*;
 
+/**
+ * Represents Petri net marking
+ */
 public class Marking implements Iterable<Integer> {
 
     public static int OMEGA = -1;
 
     private final int[] marking;
 
+    @JsonCreator
     public Marking(int... marking) {
         this.marking = new int[marking.length];
         System.arraycopy(marking, 0, this.marking, 0, marking.length);

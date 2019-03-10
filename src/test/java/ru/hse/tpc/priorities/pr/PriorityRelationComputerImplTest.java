@@ -1,29 +1,31 @@
-package ru.hse.tpc.priorities;
+package ru.hse.tpc.priorities.pr;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
 import ru.hse.tpc.desel.DeselAlgo;
-import ru.hse.tpc.desel.domain.CyclicRun;
-import ru.hse.tpc.desel.domain.Marking;
-import ru.hse.tpc.desel.domain.Transition;
-import ru.hse.tpc.priorities.domain.SpineTreeNode;
+import ru.hse.tpc.common.CyclicRun;
+import ru.hse.tpc.common.Marking;
+import ru.hse.tpc.common.Transition;
+import ru.hse.tpc.priorities.common.SpineTreeNode;
+import ru.hse.tpc.priorities.pr.PriorityRelationComputerImpl;
+import ru.hse.tpc.priorities.spct.SPCTBuilderImpl;
+import ru.hse.tpc.priorities.st.SpineTreeBuilderImpl;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
-import static org.junit.Assert.*;
+public class PriorityRelationComputerImplTest {
 
-public class SPCTBuilderImplTest {
-
-    private SpineTreeNode spineTree;
-    private List<Transition> transitions;
+    private SpineTreeNode spct;
 
     @Test
-    public void buildTest() {
-        SpineTreeNode coloredSpineTree = new SPCTBuilderImpl().build(spineTree, transitions);
-        System.out.println(coloredSpineTree);
+    public void computeTest() {
+        Set<ImmutablePair<Transition, Transition>> priorityRelation = new PriorityRelationComputerImpl().compute(spct);
+        System.out.println("================= Priority Relation =================");
+        priorityRelation.forEach(e -> System.out.println(e.left + " << " + e.right));
     }
 
     @Before
@@ -48,7 +50,9 @@ public class SPCTBuilderImplTest {
                 Collections.singletonList(ImmutablePair.of(3, 1)));
 
         Marking initialMarking = new Marking(1,0,0,1,0);
-        List<CyclicRun> cyclicRuns = DeselAlgo.findCyclicRuns((this.transitions = Arrays.asList(a, b, c, d)), initialMarking);
-        this.spineTree = new SpineTreeBuilderImpl().build(initialMarking, cyclicRuns);
+        List<Transition> transitions = Arrays.asList(a, b, c, d);
+        List<CyclicRun> cyclicRuns = DeselAlgo.findCyclicRuns(transitions, initialMarking);
+        SpineTreeNode spineTree = new SpineTreeBuilderImpl().build(initialMarking, cyclicRuns);
+        this.spct = new SPCTBuilderImpl().build(spineTree, transitions);
     }
 }

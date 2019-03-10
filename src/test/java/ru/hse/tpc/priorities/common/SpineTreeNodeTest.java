@@ -1,12 +1,10 @@
-package ru.hse.tpc.priorities.domain;
+package ru.hse.tpc.priorities.common;
 
 import org.junit.Test;
-import ru.hse.tpc.desel.domain.Marking;
-import ru.hse.tpc.desel.domain.Transition;
+import ru.hse.tpc.common.Marking;
+import ru.hse.tpc.common.Transition;
 
 import java.util.Collections;
-
-import static org.junit.Assert.*;
 
 public class SpineTreeNodeTest {
 

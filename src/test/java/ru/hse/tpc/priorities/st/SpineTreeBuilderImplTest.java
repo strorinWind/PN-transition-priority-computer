@@ -1,19 +1,19 @@
-package ru.hse.tpc.priorities;
+package ru.hse.tpc.priorities.st;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
 import ru.hse.tpc.desel.DeselAlgo;
-import ru.hse.tpc.desel.domain.CyclicRun;
-import ru.hse.tpc.desel.domain.Marking;
-import ru.hse.tpc.desel.domain.Transition;
-import ru.hse.tpc.priorities.domain.SpineTreeNode;
+import ru.hse.tpc.common.CyclicRun;
+import ru.hse.tpc.common.Marking;
+import ru.hse.tpc.common.Transition;
+import ru.hse.tpc.priorities.common.SpineTreeNode;
+import ru.hse.tpc.priorities.st.SpineTreeBuilder;
+import ru.hse.tpc.priorities.st.SpineTreeBuilderImpl;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class SpineTreeBuilderImplTest {
 
