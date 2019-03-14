@@ -8,66 +8,53 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-// TODO: refactor
 public class CGBuilderParallel extends AbstractCGBuilder {
 
     private final ForkJoinPool fjPool;
-
-    private ConcurrentMap<Marking, Set<ImmutablePair<Transition, Marking>>> graph;
-    private List<Transition> transitions;
 
     public CGBuilderParallel(ForkJoinPool fjPool) {
         this.fjPool = fjPool;
     }
 
-    public Map<Marking, Set<ImmutablePair<Transition, Marking>>> build(Marking initialMarking, List<Transition> transitions) {
-        System.out.println("FJPool - " + fjPool.toString());
-        this.transitions = transitions;
-        this.graph = new ConcurrentHashMap<>();
-        this.graph.put(initialMarking, new HashSet<>());
-        CGVertex root = new CGVertex(initialMarking, null);
-        List<Future<Boolean>> futures = fjPool.invokeAll(
-                transitions.stream().filter(tr -> tr.canOccur(initialMarking))
-                        .map(tr -> (Callable<Boolean>) () -> {
-                            new ForkBuild(ImmutablePair.of(root, tr)).compute();
-                            return true;
-                        }).collect(Collectors.toList())
-        );
-        for (Future<Boolean> future : futures) {
-            try {
-                future.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-        System.out.println("FJPool - " + fjPool.toString());
+    @Override
+    public Map<Marking, List<ImmutablePair<Transition, Marking>>> build(Marking initialMarking, List<Transition> transitions) {
+        // <DEBUG>
+        //System.out.println(CGBuilderParallel.class.getSimpleName() +" FJPool: " + fjPool.toString());
+        // </DEBUG>
+        ConcurrentMap<Marking, List<ImmutablePair<Transition, Marking>>> graph = new ConcurrentHashMap<>();
+        fjPool.invoke(new ForkBuild(new CGVertex(initialMarking, null), transitions, graph));
+        // <DEBUG>
+        //System.out.println(CGBuilderParallel.class.getSimpleName() +" FJPool: " + fjPool.toString());
+        // </DEBUG>
         return graph;
     }
 
     private class ForkBuild extends RecursiveAction {
-        private final ImmutablePair<CGVertex, Transition> workUnit;
+        private final CGVertex v;
+        private final List<Transition> transitions;
+        private final ConcurrentMap<Marking, List<ImmutablePair<Transition, Marking>>> graph;
 
-        ForkBuild(ImmutablePair<CGVertex, Transition> workUnit) {
-            this.workUnit = workUnit;
+        ForkBuild(CGVertex v, List<Transition> transitions,
+                  ConcurrentMap<Marking, List<ImmutablePair<Transition, Marking>>> graph) {
+            this.v = v;
+            this.transitions = transitions;
+            this.graph = graph;
         }
 
         @Override
         protected void compute() {
-            System.out.println("Executing transition " + workUnit.right + " for marking " + workUnit.left.getM() + " by thread " + Thread.currentThread().getId());
-            CGVertex v = workUnit.left;
-            Transition t = workUnit.right;
-            Marking newMarking = t.fire(v.getM());
-            Marking generalizedMarking = CGBuilderParallel.this.generalize(newMarking, v);
-            CGBuilderParallel.this.graph.get(v.getM()).add(ImmutablePair.of(t, generalizedMarking));
-            // check if the marking occurred for the 1st time
-            if (CGBuilderParallel.this.graph.putIfAbsent(generalizedMarking, new HashSet<>()) == null) {
-                CGVertex newVertex = new CGVertex(generalizedMarking, v);
-                invokeAll(
-                        CGBuilderParallel.this.transitions.stream().filter(tr -> tr.canOccur(generalizedMarking))
-                                .map(tr -> new ForkBuild(ImmutablePair.of(newVertex, tr))).collect(Collectors.toList())
-                );
+            Marking vm = v.getM();
+            // <DEBUG>
+            //System.out.println("Executing computations for marking " + vm + " in thread " + Thread.currentThread().getId());
+            // </DEBUG>
+            if (graph.putIfAbsent(vm, new ArrayList<>()) == null) {
+                List<ForkBuild> tasks = transitions.stream()
+                        .filter(t -> t.canOccur(vm))
+                        .map(t -> ImmutablePair.of(t, generalize(t.fire(vm), v)))
+                        .peek(p -> graph.get(vm).add(p))
+                        .map(p -> new ForkBuild(new CGVertex(p.right, v), transitions, graph))
+                        .collect(Collectors.toList());
+                invokeAll(tasks);
             }
         }
     }

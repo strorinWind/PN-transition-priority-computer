@@ -5,30 +5,23 @@ import ru.hse.tpc.common.Marking;
 import ru.hse.tpc.common.Transition;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CGBuilderSingleThreaded extends AbstractCGBuilder {
 
     @Override
-    public Map<Marking, Set<ImmutablePair<Transition, Marking>>> build(Marking initialMarking, List<Transition> transitions) {
-        Map<Marking, Set<ImmutablePair<Transition, Marking>>> graph = new HashMap<>();
-        graph.put(initialMarking, new HashSet<>());
-        CGVertex root = new CGVertex(initialMarking, null);
-        Queue<ImmutablePair<CGVertex, Transition>> workQ = transitions.stream().filter(t -> t.canOccur(initialMarking))
-                .map(t -> ImmutablePair.of(root, t)).collect(Collectors.toCollection(LinkedList::new));
-        while (!workQ.isEmpty()) {
-            ImmutablePair<CGVertex, Transition> work = workQ.remove();
-            CGVertex v = work.left;
-            Transition t = work.right;
-            Marking newMarking = t.fire(v.getM());
-            Marking generalizedMarking = generalize(newMarking, v);
-            graph.get(v.getM()).add(ImmutablePair.of(t, generalizedMarking));
-            if (graph.putIfAbsent(generalizedMarking, new HashSet<>()) == null) { // check if the marking occurred for the 1st time
-                CGVertex newVertex = new CGVertex(generalizedMarking, v);
-                workQ.addAll(
-                        transitions.stream().filter(tr -> tr.canOccur(generalizedMarking))
-                                .map(tr -> ImmutablePair.of(newVertex, tr)).collect(Collectors.toList())
-                );
+    public Map<Marking, List<ImmutablePair<Transition, Marking>>> build(Marking initialMarking, List<Transition> transitions) {
+        Map<Marking, List<ImmutablePair<Transition, Marking>>> graph = new HashMap<>();
+        Deque<CGVertex> q = new LinkedList<>();
+        q.addFirst(new CGVertex(initialMarking, null));
+        while (!q.isEmpty()) {
+            CGVertex v = q.remove();
+            Marking vm = v.getM();
+            if (graph.putIfAbsent(vm, new ArrayList<>()) == null) {
+                transitions.stream()
+                        .filter(t -> t.canOccur(vm))
+                        .map(t -> ImmutablePair.of(t, generalize(t.fire(vm), v)))
+                        .peek(p -> graph.get(vm).add(p))
+                        .forEach(p -> q.addLast(new CGVertex(p.right, v)));
             }
         }
         return graph;

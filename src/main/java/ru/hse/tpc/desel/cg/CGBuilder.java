@@ -6,7 +6,6 @@ import ru.hse.tpc.common.Transition;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Petri net covering graph builder
@@ -20,6 +19,6 @@ public interface CGBuilder {
      * @return covering graph represented by map where key is a vertex of the covering graph and value is a set
      *  of pairs of adjacent vertices with corresponding transitions
      */
-    Map<Marking, Set<ImmutablePair<Transition, Marking>>> build(Marking initialMarking, List<Transition> transitions);
+    Map<Marking, List<ImmutablePair<Transition, Marking>>> build(Marking initialMarking, List<Transition> transitions);
 
 }

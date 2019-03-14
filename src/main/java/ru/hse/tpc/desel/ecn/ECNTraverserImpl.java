@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class ECNTraverserImpl implements ECNTraverser {
 
     @Override
-    public List<CyclicRun> findCyclicRuns(Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg,
+    public List<CyclicRun> findCyclicRuns(Map<Marking, List<ImmutablePair<Transition, Marking>>> cg,
                                           ECNMarking initialMarking, Set<Transition> transitionSet) {
         List<CyclicRun> cyclicRuns = new ArrayList<>();
         Deque<TraverseNode> traverseQ = new LinkedList<>();
@@ -71,7 +71,7 @@ public class ECNTraverserImpl implements ECNTraverser {
 
     private List<ImmutablePair<Transition, Marking>> filterOutOccurredTransitions(
             TraverseNode baseMarkingNode,
-            Set<ImmutablePair<Transition, Marking>> outgoingTransitions
+            List<ImmutablePair<Transition, Marking>> outgoingTransitions
     ) {
         Map<Transition, Marking> tToResultingM = outgoingTransitions.stream()
                 .collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight));

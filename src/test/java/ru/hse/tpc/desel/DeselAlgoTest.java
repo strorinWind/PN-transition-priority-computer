@@ -39,6 +39,16 @@ public class DeselAlgoTest {
         System.out.println("======================= Cyclic Runs =======================");
         cyclicRuns.forEach(System.out::println);
         System.out.println("===========================================================");
+        Set<String> expectedCycles = new HashSet<>(Arrays.asList(
+                "babacd",
+                "babcad",
+                "babcda",
+                "b|abacbd",
+                "b|abcabd",
+                "ba|bacbad"
+        ));
+        assertEquals(expectedCycles.size(), cyclicRuns.size());
+        cyclicRuns.forEach(cr -> assertTrue(expectedCycles.contains(cr.toString())));
     }
 
     @Test

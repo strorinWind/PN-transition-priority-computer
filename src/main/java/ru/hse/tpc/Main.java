@@ -49,6 +49,10 @@ public class Main {
             System.out.println("Petri net has no cyclic runs. Terminating...");
             return;
         }
+        // <DEBUG>
+        System.out.println("Found cyclic runs:");
+        cyclicRuns.forEach(System.out::println);
+        // </DEBUG>
         Map<Transition, Integer> result = PrioritiesComputationAlgo.computePriorityValues(cyclicRuns,
                 petriNet.getMarking(), petriNet.getTransitions());
 

@@ -1,7 +1,6 @@
 package ru.hse.tpc.desel.cg;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Ignore;
 import org.junit.Test;
 import ru.hse.tpc.common.Marking;
 import ru.hse.tpc.common.Transition;
@@ -14,7 +13,6 @@ import static org.junit.Assert.*;
 
 public class CGBuilderParallelTest {
 
-    @Ignore
     @Test
     public void buildTest() {
         Transition a = new Transition("a",
@@ -38,7 +36,7 @@ public class CGBuilderParallelTest {
 
         Marking initialMarking = new Marking(1,0,0,1,0);
         CGBuilder cgBuilder = new CGBuilderParallel(ForkJoinPool.commonPool());
-        Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(a, b, c, d));
+        Map<Marking, List<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(a, b, c, d));
 
         Map<Marking, Integer> expectedMarkingToEdgeNum = new HashMap<>(9);
         expectedMarkingToEdgeNum.put(new Marking(1,0,0,1,0), 1);

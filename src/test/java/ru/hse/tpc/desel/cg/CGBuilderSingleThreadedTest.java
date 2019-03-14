@@ -22,7 +22,7 @@ public class CGBuilderSingleThreadedTest {
                 Collections.singletonList(ImmutablePair.of(0, 1)));
         Marking initialMarking = new Marking(1,0);
         CGBuilderSingleThreaded cgBuilder = new CGBuilderSingleThreaded();
-        Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(t1, t2));
+        Map<Marking, List<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(t1, t2));
         cg.forEach((key, value) -> {
             if (key.equals(initialMarking)) {
                 System.out.print("ROOT ");
@@ -46,7 +46,7 @@ public class CGBuilderSingleThreadedTest {
                 Collections.singletonList(ImmutablePair.of(0, 1)));
         Marking initialMarking = new Marking(1,0,0);
         CGBuilderSingleThreaded cgBuilder = new CGBuilderSingleThreaded();
-        Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(t1, t2));
+        Map<Marking, List<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(t1, t2));
         cg.forEach((key, value) -> {
             if (key.equals(initialMarking)) {
                 System.out.print("ROOT ");
@@ -73,7 +73,7 @@ public class CGBuilderSingleThreadedTest {
                 Collections.singletonList(ImmutablePair.of(0,1)));
         Marking initialMarking = new Marking(1,0,0);
         CGBuilderSingleThreaded cgBuilder = new CGBuilderSingleThreaded();
-        Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(t1,t2));
+        Map<Marking, List<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(t1,t2));
         cg.forEach((key, value) -> {
             if (key.equals(initialMarking)) {
                 System.out.print("ROOT ");
@@ -108,7 +108,7 @@ public class CGBuilderSingleThreadedTest {
 
         Marking initialMarking = new Marking(1,0,0,1,0);
         CGBuilderSingleThreaded cgBuilder = new CGBuilderSingleThreaded();
-        Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(a, b, c, d));
+        Map<Marking, List<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(a, b, c, d));
 
         cg.forEach((key, value) -> {
             if (key.equals(initialMarking)) {

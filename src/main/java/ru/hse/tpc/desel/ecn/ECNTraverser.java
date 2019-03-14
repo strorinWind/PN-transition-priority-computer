@@ -22,7 +22,7 @@ public interface ECNTraverser {
      * @param transitionSet - transition set
      * @return list of cyclic runs
      */
-    List<CyclicRun> findCyclicRuns(Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg, ECNMarking initialMarking,
+    List<CyclicRun> findCyclicRuns(Map<Marking, List<ImmutablePair<Transition, Marking>>> cg, ECNMarking initialMarking,
                                    Set<Transition> transitionSet);
 
 }

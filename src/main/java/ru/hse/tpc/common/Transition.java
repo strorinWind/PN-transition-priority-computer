@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +19,8 @@ public class Transition {
     // key = place, value = post(t,place) - pre(t,place)
     private final Map<Integer, Integer> occurrenceResult;
 
+    private final int hashCode;
+
     @JsonCreator
     public Transition(@JsonProperty("label") String label,
                       @JsonProperty("preList") List<Pair<Integer, Integer>> preList,
@@ -32,6 +33,7 @@ public class Transition {
                 pre ->  -pre.getRight() + postMap.getOrDefault(pre.getLeft(), 0))
         );
         postMap.forEach((k, v) -> occurrenceResult.merge(k, v, (v1, v2) -> v1));
+        this.hashCode = precomputeHashCode();
     }
 
     public boolean canOccur(Marking m) {
@@ -52,6 +54,29 @@ public class Transition {
         return placeToMarkingMap.entrySet().stream()
                 .map(e -> ImmutablePair.of(e.getKey(), e.getValue() + occurrenceResult.getOrDefault(e.getKey(), 0)))
                 .collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight));
+    }
+
+    private int precomputeHashCode() {
+        int result = Objects.hashCode(label);
+        result = 31 * result + preList.hashCode();
+        result = 31 * result + occurrenceResult.entrySet().hashCode();
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Transition) || o.hashCode() != this.hashCode) {
+            return false;
+        }
+        Transition that = (Transition) o;
+        return this.label.equals(that.label) &&
+                this.preList.equals(that.preList) &&
+                this.occurrenceResult.equals(that.occurrenceResult);
     }
 
     @Override

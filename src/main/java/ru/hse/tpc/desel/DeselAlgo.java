@@ -24,7 +24,7 @@ public class DeselAlgo {
 
     public static List<CyclicRun> findCyclicRuns(List<Transition> transitions, Marking initialMarking) {
         CGBuilder cgBuilder = new CGBuilderSingleThreaded();
-        Map<Marking, Set<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, transitions);
+        Map<Marking, List<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, transitions);
         // <DEBUG>
         System.out.println("Covering graph:");
         cg.forEach((key, value) -> {
