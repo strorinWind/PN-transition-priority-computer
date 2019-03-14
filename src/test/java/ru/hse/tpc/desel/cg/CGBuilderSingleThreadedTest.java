@@ -21,6 +21,7 @@ public class CGBuilderSingleThreadedTest {
                 Collections.singletonList(ImmutablePair.of(1, 1)),
                 Collections.singletonList(ImmutablePair.of(0, 1)));
         Marking initialMarking = new Marking(1,0);
+
         CGBuilderSingleThreaded cgBuilder = new CGBuilderSingleThreaded();
         Map<Marking, List<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(t1, t2));
         cg.forEach((key, value) -> {
@@ -30,6 +31,18 @@ public class CGBuilderSingleThreadedTest {
             System.out.print(key + " -> ");
             value.forEach(System.out::print);
             System.out.println();
+        });
+
+        Map<Marking, Integer> expectedMarkingToEdgeNum = new HashMap<>(2);
+        expectedMarkingToEdgeNum.put(new Marking(1,0), 1);
+        expectedMarkingToEdgeNum.put(new Marking(0,1), 1);
+        Map<Marking, Integer> actualMarkingToEdgeNum = cg.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().size()));
+
+        assertEquals(expectedMarkingToEdgeNum.size(), actualMarkingToEdgeNum.size());
+        actualMarkingToEdgeNum.forEach((k, v) -> {
+            assertTrue(expectedMarkingToEdgeNum.containsKey(k));
+            assertEquals(expectedMarkingToEdgeNum.get(k), v);
         });
     }
 
@@ -45,6 +58,7 @@ public class CGBuilderSingleThreadedTest {
                 Collections.singletonList(ImmutablePair.of(1, 1)),
                 Collections.singletonList(ImmutablePair.of(0, 1)));
         Marking initialMarking = new Marking(1,0,0);
+
         CGBuilderSingleThreaded cgBuilder = new CGBuilderSingleThreaded();
         Map<Marking, List<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(t1, t2));
         cg.forEach((key, value) -> {
@@ -54,6 +68,20 @@ public class CGBuilderSingleThreadedTest {
             System.out.print(key + " -> ");
             value.forEach(System.out::print);
             System.out.println();
+        });
+
+        Map<Marking, Integer> expectedMarkingToEdgeNum = new HashMap<>(4);
+        expectedMarkingToEdgeNum.put(new Marking(1, 0, 0), 1);
+        expectedMarkingToEdgeNum.put(new Marking(0, 1, 1), 1);
+        expectedMarkingToEdgeNum.put(new Marking(1, 0, -1), 1);
+        expectedMarkingToEdgeNum.put(new Marking(0, 1, -1), 1);
+        Map<Marking, Integer> actualMarkingToEdgeNum = cg.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().size()));
+
+        assertEquals(expectedMarkingToEdgeNum.size(), actualMarkingToEdgeNum.size());
+        actualMarkingToEdgeNum.forEach((k, v) -> {
+            assertTrue(expectedMarkingToEdgeNum.containsKey(k));
+            assertEquals(expectedMarkingToEdgeNum.get(k), v);
         });
     }
 
