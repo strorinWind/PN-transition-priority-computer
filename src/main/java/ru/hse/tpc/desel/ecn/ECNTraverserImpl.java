@@ -41,7 +41,7 @@ public class ECNTraverserImpl implements ECNTraverser {
         return cyclicRuns;
     }
 
-    private Optional<CyclicRun> checkForCyclicRun(TraverseNode node) {
+    protected Optional<CyclicRun> checkForCyclicRun(TraverseNode node) {
         Deque<Transition> prefix = new LinkedList<>();
         Deque<Transition> cycle = new LinkedList<>();
         Deque<Transition> targetPart = cycle;
@@ -65,11 +65,11 @@ public class ECNTraverserImpl implements ECNTraverser {
         return Optional.empty();
     }
 
-    private boolean cyclicRunContainsAllTransitions(Set<Transition> transitionSet, CyclicRun cyclicRun) {
+    protected boolean cyclicRunContainsAllTransitions(Set<Transition> transitionSet, CyclicRun cyclicRun) {
         return new HashSet<>(cyclicRun.getCycle()).containsAll(transitionSet);
     }
 
-    private List<ImmutablePair<Transition, Marking>> filterOutOccurredTransitions(
+    protected List<ImmutablePair<Transition, Marking>> filterOutOccurredTransitions(
             TraverseNode baseMarkingNode,
             List<ImmutablePair<Transition, Marking>> outgoingTransitions
     ) {
@@ -89,7 +89,7 @@ public class ECNTraverserImpl implements ECNTraverser {
                 .collect(Collectors.toList());
     }
 
-    private Function<ImmutablePair<Transition, Marking>, Optional<TraverseNode>> toNewTraverseNode(TraverseNode parentNode) {
+    protected Function<ImmutablePair<Transition, Marking>, Optional<TraverseNode>> toNewTraverseNode(TraverseNode parentNode) {
         ECNMarking parentMarking = parentNode.getMarking();
         return t -> {
             Map<Integer, Integer> newAdditionalPlacesMarking =
