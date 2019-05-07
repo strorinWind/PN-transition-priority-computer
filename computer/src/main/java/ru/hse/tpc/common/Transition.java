@@ -58,7 +58,9 @@ public class Transition {
 
     private int precomputeHashCode() {
         int result = Objects.hashCode(label);
-        result = 31 * result + preList.hashCode();
+        for (Pair<Integer, Integer> p : preList) {
+            result += (124567890 + p.hashCode()) * p.hashCode();
+        }
         result = 31 * result + occurrenceResult.entrySet().hashCode();
         return result;
     }
@@ -75,7 +77,8 @@ public class Transition {
         }
         Transition that = (Transition) o;
         return this.label.equals(that.label) &&
-                this.preList.equals(that.preList) &&
+                this.preList.size() == that.preList.size() &&
+                new HashSet<>(this.preList).containsAll(that.preList) &&
                 this.occurrenceResult.equals(that.occurrenceResult);
     }
 
