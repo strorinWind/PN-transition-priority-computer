@@ -22,15 +22,17 @@ public class TPCApp extends Application {
         Flow flow = new Flow(MainController.class);
         DefaultFlowContainer container = new DefaultFlowContainer();
         ViewFlowContext context = new ViewFlowContext();
+        context.register("Stage", stage);
         flow.createHandler(context).start(container);
 
         JFXDecorator decorator = new JFXDecorator(stage, container.getView());
         decorator.setCustomMaximize(true);
+        decorator.setOnCloseButtonAction(() -> System.exit(0));
         decorator.setGraphic(new SVGGlyph(""));
 
-        stage.setTitle("TPC");
+        stage.setTitle("TPC 1.1");
 
-        double width = 800;
+        double width = 1000;
         double height = 600;
 
         Scene scene = new Scene(decorator, width, height);

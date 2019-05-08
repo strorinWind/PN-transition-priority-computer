@@ -22,9 +22,7 @@ public class ECNTraverserParallel extends ECNTraverserImpl {
     @Override
     public List<CyclicRun> findCyclicRuns(Map<Marking, List<ImmutablePair<Transition, Marking>>> cg,
                                           ECNMarking initialMarking, Set<Transition> transitionSet) {
-        List<CyclicRun> cyclicRuns = fjPool.invoke(new ForkTraverse(new TraverseNode(initialMarking), transitionSet, cg));
-        System.out.println(ECNTraverserParallel.class + " FJPool: " + fjPool);
-        return cyclicRuns;
+        return fjPool.invoke(new ForkTraverse(new TraverseNode(initialMarking), transitionSet, cg));
     }
 
     private class ForkTraverse extends RecursiveTask<List<CyclicRun>> {
@@ -41,9 +39,6 @@ public class ECNTraverserParallel extends ECNTraverserImpl {
 
         @Override
         protected List<CyclicRun> compute() {
-            // <DEBUG>
-            System.out.println("Executing computations in thread " + Thread.currentThread().getId());
-            // </DEBUG>
             Optional<CyclicRun> cyclicRunO = checkForCyclicRun(node);
             if (cyclicRunO.isPresent()) {
                 if (cyclicRunContainsAllTransitions(transitionSet, cyclicRunO.get())) {

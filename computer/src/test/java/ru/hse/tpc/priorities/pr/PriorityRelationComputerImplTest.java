@@ -3,12 +3,11 @@ package ru.hse.tpc.priorities.pr;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
-import ru.hse.tpc.desel.DeselAlgo;
+import ru.hse.tpc.desel.DeselAlgoSingleThreaded;
 import ru.hse.tpc.common.CyclicRun;
 import ru.hse.tpc.common.Marking;
 import ru.hse.tpc.common.Transition;
 import ru.hse.tpc.priorities.common.SpineTreeNode;
-import ru.hse.tpc.priorities.pr.PriorityRelationComputerImpl;
 import ru.hse.tpc.priorities.spct.SPCTBuilderImpl;
 import ru.hse.tpc.priorities.st.SpineTreeBuilderImpl;
 
@@ -51,7 +50,7 @@ public class PriorityRelationComputerImplTest {
 
         Marking initialMarking = new Marking(1,0,0,1,0);
         List<Transition> transitions = Arrays.asList(a, b, c, d);
-        List<CyclicRun> cyclicRuns = DeselAlgo.findCyclicRuns(transitions, initialMarking);
+        List<CyclicRun> cyclicRuns = new DeselAlgoSingleThreaded().findCyclicRuns(transitions, initialMarking);
         SpineTreeNode spineTree = new SpineTreeBuilderImpl().build(initialMarking, cyclicRuns);
         this.spct = new SPCTBuilderImpl().build(spineTree, transitions);
     }

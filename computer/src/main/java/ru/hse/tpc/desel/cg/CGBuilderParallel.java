@@ -18,14 +18,8 @@ public class CGBuilderParallel extends AbstractCGBuilder {
 
     @Override
     public Map<Marking, List<ImmutablePair<Transition, Marking>>> build(Marking initialMarking, List<Transition> transitions) {
-        // <DEBUG>
-        //System.out.println(CGBuilderParallel.class.getSimpleName() +" FJPool: " + fjPool.toString());
-        // </DEBUG>
         ConcurrentMap<Marking, List<ImmutablePair<Transition, Marking>>> graph = new ConcurrentHashMap<>();
         fjPool.invoke(new ForkBuild(new CGVertex(initialMarking, null), transitions, graph));
-        // <DEBUG>
-        //System.out.println(CGBuilderParallel.class.getSimpleName() +" FJPool: " + fjPool.toString());
-        // </DEBUG>
         return graph;
     }
 
@@ -44,10 +38,8 @@ public class CGBuilderParallel extends AbstractCGBuilder {
         @Override
         protected void compute() {
             Marking vm = v.getM();
-            // <DEBUG>
-            //System.out.println("Executing computations for marking " + vm + " in thread " + Thread.currentThread().getId());
-            // </DEBUG>
             if (graph.putIfAbsent(vm, new ArrayList<>()) == null) {
+                System.out.println(Thread.currentThread().getName() + ": Handling node. Marking: " + vm.toString() + " CG size: " + graph.size());
                 List<ForkBuild> tasks = transitions.stream()
                         .filter(t -> t.canOccur(vm))
                         .map(t -> ImmutablePair.of(t, generalize(t.fire(vm), v)))

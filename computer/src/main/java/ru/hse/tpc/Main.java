@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.commons.lang3.tuple.Pair;
 import ru.hse.tpc.common.CyclicRun;
 import ru.hse.tpc.common.Transition;
-import ru.hse.tpc.desel.DeselAlgo;
+import ru.hse.tpc.desel.DeselAlgoSingleThreaded;
 import ru.hse.tpc.priorities.PrioritiesComputationAlgo;
 
 import java.io.FileInputStream;
@@ -44,7 +44,7 @@ public class Main {
             throw new RuntimeException("Error processing input Petri net", e);
         }
 
-        List<CyclicRun> cyclicRuns = DeselAlgo.findCyclicRuns(petriNet.getTransitions(), petriNet.getMarking());
+        List<CyclicRun> cyclicRuns = new DeselAlgoSingleThreaded().findCyclicRuns(petriNet.getTransitions(), petriNet.getMarking());
         if (cyclicRuns.isEmpty()) {
             System.out.println("Petri net has no cyclic runs. Terminating...");
             return;

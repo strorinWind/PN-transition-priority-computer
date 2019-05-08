@@ -3,12 +3,11 @@ package ru.hse.tpc.priorities.spct;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
-import ru.hse.tpc.desel.DeselAlgo;
+import ru.hse.tpc.desel.DeselAlgoSingleThreaded;
 import ru.hse.tpc.common.CyclicRun;
 import ru.hse.tpc.common.Marking;
 import ru.hse.tpc.common.Transition;
 import ru.hse.tpc.priorities.common.SpineTreeNode;
-import ru.hse.tpc.priorities.spct.SPCTBuilderImpl;
 import ru.hse.tpc.priorities.st.SpineTreeBuilderImpl;
 
 import java.util.Arrays;
@@ -48,7 +47,7 @@ public class SPCTBuilderImplTest {
                 Collections.singletonList(ImmutablePair.of(3, 1)));
 
         Marking initialMarking = new Marking(1,0,0,1,0);
-        List<CyclicRun> cyclicRuns = DeselAlgo.findCyclicRuns((this.transitions = Arrays.asList(a, b, c, d)), initialMarking);
+        List<CyclicRun> cyclicRuns = new DeselAlgoSingleThreaded().findCyclicRuns((this.transitions = Arrays.asList(a, b, c, d)), initialMarking);
         this.spineTree = new SpineTreeBuilderImpl().build(initialMarking, cyclicRuns);
     }
 }

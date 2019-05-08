@@ -10,7 +10,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class DeselAlgoTest {
+public class DeselAlgoSingleThreadedTest {
 
 
     @Test
@@ -35,7 +35,7 @@ public class DeselAlgoTest {
                 Collections.singletonList(ImmutablePair.of(3, 1)));
 
         Marking initialMarking = new Marking(1,0,0,1,0);
-        List<CyclicRun> cyclicRuns = DeselAlgo.findCyclicRuns(Arrays.asList(a, b, c, d), initialMarking);
+        List<CyclicRun> cyclicRuns = new DeselAlgoSingleThreaded().findCyclicRuns(Arrays.asList(a, b, c, d), initialMarking);
         System.out.println("======================= Cyclic Runs =======================");
         cyclicRuns.forEach(System.out::println);
         System.out.println("===========================================================");
