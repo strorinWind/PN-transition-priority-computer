@@ -6,10 +6,11 @@ import ru.hse.tpc.common.Marking;
 import ru.hse.tpc.common.Transition;
 
 import java.util.*;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CGBuilderParallelTest {
 
@@ -35,7 +36,7 @@ public class CGBuilderParallelTest {
                 Collections.singletonList(ImmutablePair.of(3, 1)));
 
         Marking initialMarking = new Marking(1,0,0,1,0);
-        CGBuilder cgBuilder = new CGBuilderParallel(ForkJoinPool.commonPool());
+        CGBuilder cgBuilder = new CGBuilderParallel(Executors.newWorkStealingPool());
         Map<Marking, List<ImmutablePair<Transition, Marking>>> cg = cgBuilder.build(initialMarking, Arrays.asList(a, b, c, d));
 
         Map<Marking, Integer> expectedMarkingToEdgeNum = new HashMap<>(9);

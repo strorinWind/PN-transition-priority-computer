@@ -15,7 +15,7 @@
             </padding>
             <TextArea fx:id="console" editable="false" wrapText="true" HBox.hgrow="ALWAYS"
                       style="-fx-font-family: 'FreeMono';-fx-font-size:16px;" />
-            <StackPane fx:id="controlsContainer" prefWidth="450">
+            <StackPane fx:id="controlsContainer" prefWidth="800">
                 <VBox spacing="20">
                     <HBox spacing="20">
                         <VBox.margin>
@@ -25,13 +25,14 @@
                                    buttonType="RAISED" text="IMPORT FILE"
                                    style="-fx-text-fill:WHITE;-fx-background-color:#5264AE;-fx-font-size:14px;"/>
                         <StackPane fx:id="fileImportStateContainer" prefHeight="40" HBox.hgrow="ALWAYS"
-                                   alignment="CENTER_LEFT">
-                            <Label fx:id="fileImportState">No file imported</Label>
+                                   alignment="CENTER_LEFT" style="-fx-font-size:16px;">
+                            <Label fx:id="fileImportState" >No file imported</Label>
                         </StackPane>
                     </HBox>
                     <Separator/>
-                    <VBox VBox.vgrow="ALWAYS">
-                        <StackPane fx:id="cyclicRunsCheckboxContainer" prefHeight="50" VBox.vgrow="ALWAYS">
+                    <VBox VBox.vgrow="ALWAYS" spacing="20">
+                        <StackPane fx:id="cyclicRunsCheckboxContainer" prefHeight="50" VBox.vgrow="ALWAYS"
+                                   style="-fx-font-size:16px;">
                             <Label fx:id="cyclicRunsPlaceholder">No cyclic runs detected</Label>
                         </StackPane>
                         <HBox alignment="CENTER" spacing="20">

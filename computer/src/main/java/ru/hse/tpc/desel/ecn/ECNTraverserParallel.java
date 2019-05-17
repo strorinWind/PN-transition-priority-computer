@@ -6,54 +6,58 @@ import ru.hse.tpc.common.Marking;
 import ru.hse.tpc.common.Transition;
 
 import java.util.*;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.RecursiveTask;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Phaser;
 
 public class ECNTraverserParallel extends ECNTraverserImpl {
 
-    private final ForkJoinPool fjPool;
+    private static final int PHASER_THRESHOLD = 10_000;
 
-    public ECNTraverserParallel(ForkJoinPool fjPool) {
-        this.fjPool = fjPool;
+    private final ExecutorService executorService;
+
+    public ECNTraverserParallel(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 
     @Override
     public List<CyclicRun> findCyclicRuns(Map<Marking, List<ImmutablePair<Transition, Marking>>> cg,
                                           ECNMarking initialMarking, Set<Transition> transitionSet) {
-        return fjPool.invoke(new ForkTraverse(new TraverseNode(initialMarking), transitionSet, cg));
+        Phaser phaser = new Phaser(1);
+        ConcurrentLinkedQueue<CyclicRun> q = new ConcurrentLinkedQueue<>();
+        executorService.submit(getTask(new TraverseNode(initialMarking), transitionSet, q, cg, phaser));
+        phaser.arriveAndAwaitAdvance();
+        return new ArrayList<>(q);
     }
 
-    private class ForkTraverse extends RecursiveTask<List<CyclicRun>> {
-        private final TraverseNode node;
-        private final Set<Transition> transitionSet;
-        private final Map<Marking, List<ImmutablePair<Transition, Marking>>> graph;
-
-        ForkTraverse(TraverseNode node, Set<Transition> transitionSet,
-                     Map<Marking, List<ImmutablePair<Transition, Marking>>> graph) {
-            this.node = node;
-            this.transitionSet = transitionSet;
-            this.graph = graph;
-        }
-
-        @Override
-        protected List<CyclicRun> compute() {
-            Optional<CyclicRun> cyclicRunO = checkForCyclicRun(node);
-            if (cyclicRunO.isPresent()) {
-                if (cyclicRunContainsAllTransitions(transitionSet, cyclicRunO.get())) {
-                    return Collections.singletonList(cyclicRunO.get());
+    private Runnable getTask(TraverseNode node, Set<Transition> transitionSet, ConcurrentLinkedQueue<CyclicRun> q,
+                             Map<Marking, List<ImmutablePair<Transition, Marking>>> graph, Phaser phaser) {
+        Phaser newPhaser = (phaser.getRegisteredParties() >= PHASER_THRESHOLD) ? new Phaser(phaser) : phaser;
+        newPhaser.register();
+        return () -> {
+            try {
+                Optional<CyclicRun> cyclicRunO = checkForCyclicRun(node);
+                if (cyclicRunO.isPresent()) {
+                    if (cyclicRunContainsAllTransitions(transitionSet, cyclicRunO.get())) {
+                        q.add(cyclicRunO.get());
+                    }
                 }
+                List<ImmutablePair<Transition, Marking>> validTransitions =
+                        filterOutOccurredTransitions(node, graph.get(node.getMarking().getOriginalPlace()));
+                System.out.println(executorService.toString() + "\n" +
+                        "Path size: " + node.getPathSize() + " Total edges: " + graph.get(node.getMarking().getOriginalPlace()).size() +
+                        " Valid: " + validTransitions.size());
+                validTransitions.stream()
+                        .map(toNewTraverseNode(node))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .map(n -> getTask(n, transitionSet, q, graph, newPhaser))
+                        .forEach(executorService::submit);
+                newPhaser.arriveAndDeregister();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.exit(0);
             }
-            List<ImmutablePair<Transition, Marking>> validTransitions =
-                    filterOutOccurredTransitions(node, graph.get(node.getMarking().getOriginalPlace()));
-            List<ForkTraverse> newTasks = validTransitions.stream()
-                    .map(toNewTraverseNode(node))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(n -> new ForkTraverse(n, transitionSet, graph))
-                    .collect(Collectors.toList());
-            return invokeAll(newTasks).stream().map(ForkJoinTask::join).flatMap(Collection::stream).collect(Collectors.toList());
-        }
+        };
     }
 }

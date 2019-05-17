@@ -24,11 +24,15 @@ public class CyclicRun implements Iterable<Transition> {
         return Collections.unmodifiableList(cycle);
     }
 
+    public int size() {
+        return prefix.size() + cycle.size();
+    }
+
     @Override
     public String toString() {
-        String prefixStr = prefix.stream().map(Transition::toString).collect(Collectors.joining("", "", "|"));
-        return ((prefixStr.length() == 1) ? "" : prefixStr) +
-                cycle.stream().map(Transition::toString).collect(Collectors.joining(""));
+        String prefixStr = prefix.stream().map(Transition::toString).collect(Collectors.joining(" -> ", "", ""));
+        return prefixStr + (prefixStr.isEmpty() ?  "" : " | " ) +
+                cycle.stream().map(Transition::toString).collect(Collectors.joining(" -> "));
     }
 
     @Override

@@ -40,12 +40,12 @@ public class DeselAlgoSingleThreadedTest {
         cyclicRuns.forEach(System.out::println);
         System.out.println("===========================================================");
         Set<String> expectedCycles = new HashSet<>(Arrays.asList(
-                "babacd",
-                "babcad",
-                "babcda",
-                "b|abacbd",
-                "b|abcabd",
-                "ba|bacbad"
+                "b -> a -> b -> a -> c -> d",
+                "b -> a -> b -> c -> a -> d",
+                "b -> a -> b -> c -> d -> a",
+                "b | a -> b -> a -> c -> b -> d",
+                "b | a -> b -> c -> a -> b -> d",
+                "b -> a | b -> a -> c -> b -> a -> d"
         ));
         assertEquals(expectedCycles.size(), cyclicRuns.size());
         cyclicRuns.forEach(cr -> assertTrue(expectedCycles.contains(cr.toString())));

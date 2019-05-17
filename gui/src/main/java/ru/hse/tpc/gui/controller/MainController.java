@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -27,6 +28,7 @@ import ru.hse.tpc.common.Transition;
 import ru.hse.tpc.desel.DeselAlgo;
 import ru.hse.tpc.desel.DeselAlgoParallel;
 import ru.hse.tpc.pnml.PNMLToInnerModelMapper;
+import ru.hse.tpc.priorities.PrioritiesComputationAlgo;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -35,7 +37,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
+import java.util.stream.Collectors;
 
 @ViewController(value = "/fxml/Main.fxml")
 public class MainController {
@@ -59,12 +61,15 @@ public class MainController {
     private Label cyclicRunsPlaceholder;
     @FXML
     private JFXButton repeatSearchBtn;
+    @FXML
+    private JFXButton computePrioritiesBtn;
 
+    private VBox checkBoxContainer;
     private StringProperty consoleText;
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private PNMLToInnerModelMapper pnmlMapper = new PNMLToInnerModelMapper();
-    private DeselAlgo deselAlgo = new DeselAlgoParallel(ForkJoinPool.commonPool());
+    private DeselAlgo deselAlgo = new DeselAlgoParallel(Executors.newWorkStealingPool());
 
     private PetriNet petriNet;
     private Map<String, CyclicRun> cyclicRunMap;
@@ -74,6 +79,7 @@ public class MainController {
         setupConsole();
         setupImportFileButton();
         setupRepeatSearchBtn();
+        setupComputePrioritiesBtn();
     }
 
     private void setupConsole() {
@@ -148,10 +154,24 @@ public class MainController {
     }
 
     private void setupRepeatSearchBtn() {
-        VBox vBox = new VBox();
-        vBox.setSpacing(20);
-        ScrollPane scrollPane = new ScrollPane(vBox);
+        checkBoxContainer = new VBox();
+        checkBoxContainer.setSpacing(20);
+        ScrollPane scrollPane = new ScrollPane(checkBoxContainer);
         JFXSpinner spinner = new JFXSpinner();
+
+        VBox spAndBtnsContainer = new VBox();
+        spAndBtnsContainer.setSpacing(20);
+        HBox btnsContainer = new HBox();
+        btnsContainer.setSpacing(15);
+        JFXButton selectAll = getCheckBoxControlBtn("Select All");
+        JFXButton deselectAll = getCheckBoxControlBtn("Deselect All");
+
+        selectAll.setOnAction((a) -> checkBoxContainer.getChildren().forEach(n -> ((JFXCheckBox) n).setSelected(true)));
+        deselectAll.setOnAction((a) -> checkBoxContainer.getChildren().forEach(n -> ((JFXCheckBox) n).setSelected(false)));
+
+        btnsContainer.getChildren().setAll(selectAll, deselectAll);
+        spAndBtnsContainer.getChildren().setAll(btnsContainer, scrollPane);
+
         spinner.setRadius(13);
         spinner.getStyleClass().add("blue-spinner");
         repeatSearchBtn.setOnAction((a) -> {
@@ -184,8 +204,8 @@ public class MainController {
                             cyclicRunMap.put(runStr, run);
                             boxes[i] = box;
                         }
-                        vBox.getChildren().setAll(boxes);
-                        cyclicRunsCheckboxContainer.getChildren().setAll(scrollPane);
+                        checkBoxContainer.getChildren().setAll(boxes);
+                        cyclicRunsCheckboxContainer.getChildren().setAll(spAndBtnsContainer);
                     }
                     repeatSearchBtn.setDisable(false);
                 });
@@ -194,6 +214,68 @@ public class MainController {
                 errorlog("No file imported");
             }
         });
+    }
+
+    private void setupComputePrioritiesBtn() {
+        computePrioritiesBtn.setOnAction((a) -> {
+            if (!checkBoxContainer.getChildren().isEmpty()) {
+                consolelog("Computing priority relation...");
+                computePrioritiesBtn.setDisable(true);
+                Task<Map<Transition, Integer>> prComputer = createPRComputer();
+                prComputer.messageProperty().addListener((o, oldValue, newValue) -> {
+                    Map<Transition, Integer> pr;
+                    try {
+                        pr = prComputer.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                        errorlog("Internal application error");
+                        pr = Collections.emptyMap();
+                    }
+                    if (pr.isEmpty()) {
+                        errorlog("Failed to compute priority relation");
+                    } else {
+                        String prStr = pr.entrySet().stream().map(e -> "p(" + e.getKey() + ") = " + e.getValue())
+                                .collect(Collectors.joining("\n"));
+                        consolelog("Priority relation was successfully computed. " +
+                                "The following priority values were assigned to transitions:\n" + prStr);
+                    }
+                    computePrioritiesBtn.setDisable(false);
+                });
+                executorService.execute(prComputer);
+            } else {
+                errorlog("Cannot compute priority relation: no cyclic runs");
+            }
+        });
+    }
+
+    private Task<Map<Transition, Integer>> createPRComputer() {
+        return new Task<Map<Transition, Integer>>() {
+            @Override
+            protected Map<Transition, Integer> call() throws Exception {
+                try {
+                    List<CyclicRun> cyclicRuns = checkBoxContainer.getChildren().stream()
+                        .filter(n -> ((JFXCheckBox) n).isSelected())
+                        .map(n -> cyclicRunMap.get(((JFXCheckBox) n).getText()))
+                        .collect(Collectors.toList());
+                    Map<Transition, Integer> pr = PrioritiesComputationAlgo.computePriorityValues(cyclicRuns,
+                        petriNet.getMarking(), petriNet.getTransitions());
+                    updateMessage("PR COMPUTATION FINISHED");
+                    return pr;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return Collections.emptyMap();
+                }
+            }
+        };
+    }
+
+    private JFXButton getCheckBoxControlBtn(String text) {
+        JFXButton jfxButton = new JFXButton(text);
+        jfxButton.setButtonType(JFXButton.ButtonType.FLAT);
+        jfxButton.setPrefWidth(100);
+        jfxButton.setPrefHeight(40);
+        jfxButton.setStyle("-fx-background-color:WHITE;");
+        return jfxButton;
     }
 
     private Task<List<CyclicRun>> createSearcher(List<Transition> transitions, Marking marking) {

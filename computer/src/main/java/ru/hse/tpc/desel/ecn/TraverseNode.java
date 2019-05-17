@@ -4,6 +4,8 @@ import ru.hse.tpc.common.Transition;
 
 public class TraverseNode {
 
+    private final int pathSize;
+
     private final TraverseNode parent;
     private final Transition incT;
     private final ECNMarking marking;
@@ -16,6 +18,7 @@ public class TraverseNode {
         this.parent = parent;
         this.incT = incT;
         this.marking = marking;
+        this.pathSize = (parent == null) ? 0 : parent.pathSize + 1;
     }
 
     public TraverseNode getParent() {
@@ -28,5 +31,9 @@ public class TraverseNode {
 
     public ECNMarking getMarking() {
         return marking;
+    }
+
+    public int getPathSize() {
+        return pathSize;
     }
 }

@@ -35,12 +35,14 @@ public class TPCApp extends Application {
         double width = 1000;
         double height = 600;
 
-        Scene scene = new Scene(decorator, width, height);
+        //Scene scene = new Scene(decorator, width, height);
+        Scene scene = new Scene(decorator);
         final ObservableList<String> stylesheets = scene.getStylesheets();
         stylesheets.addAll(TPCApp.class.getResource("/css/jfoenix-fonts.css").toExternalForm(),
                 TPCApp.class.getResource("/css/jfoenix-design.css").toExternalForm(),
                 TPCApp.class.getResource("/css/jfoenix-main-demo.css").toExternalForm());
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.show();
     }
 }
