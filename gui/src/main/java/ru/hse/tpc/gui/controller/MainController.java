@@ -282,9 +282,14 @@ public class MainController {
         return new Task<List<CyclicRun>>() {
             @Override
             protected List<CyclicRun> call() throws Exception {
-                List<CyclicRun> cyclicRuns = deselAlgo.findCyclicRuns(transitions, marking);
-                updateMessage("SEARCH FINISHED");
-                return cyclicRuns;
+                try {
+                    List<CyclicRun> cyclicRuns = deselAlgo.findCyclicRuns(transitions, marking, 20);
+                    updateMessage("SEARCH FINISHED");
+                    return cyclicRuns;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return Collections.emptyList();
+                }
             }
         };
     }

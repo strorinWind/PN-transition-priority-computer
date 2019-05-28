@@ -1,5 +1,6 @@
 package ru.hse.tpc.priorities;
 
+import com.google.common.flogger.FluentLogger;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import ru.hse.tpc.common.CyclicRun;
 import ru.hse.tpc.common.Marking;
@@ -24,36 +25,31 @@ import java.util.stream.Collectors;
  */
 public class PrioritiesComputationAlgo {
 
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+
     public static Map<Transition, Integer> computePriorityValues(List<CyclicRun> cyclicRuns, Marking initialMarking,
                                                                  List<Transition> transitions) {
+        logger.atInfo().log("Building spine tree upon %d cycles", cyclicRuns.size());
         SpineTreeBuilder spineTreeBuilder = new SpineTreeBuilderImpl();
         SpineTreeNode spineTree = spineTreeBuilder.build(initialMarking, cyclicRuns);
-        // <DEBUG>
-        System.out.println("Spine tree:");
-        System.out.println(spineTree);
-        // </DEBUG>
         SPCTBuilder spctBuilder = new SPCTBuilderImpl();
         SpineTreeNode spct = spctBuilder.build(spineTree, transitions);
-        // <DEBUG>
-        System.out.println("Spine based covering tree:");
-        System.out.println(spct);
-        // </DEBUG>
         PriorityRelationComputer priorityRelationComputer = new PriorityRelationComputerImpl();
         Set<ImmutablePair<Transition, Transition>> pr = priorityRelationComputer.compute(spct);
         Set<ImmutablePair<Transition, Transition>> contradictions = pr.stream()
                 .filter(r -> pr.contains(ImmutablePair.of(r.right, r.left))).collect(Collectors.toSet());
         if (!contradictions.isEmpty()) {
-            System.out.println("Priority relation contains the following contradicting relations:");
-            contradictions.forEach(r -> System.out.print("(" + r.left + "," + r.right + ")" + " "));
-            System.out.println();
-            System.out.println("Removing them from further processing...");
+            logger.atWarning().log("Priority relation contains the following contradicting relations:\n%s\n" +
+                            "Removing them from further processing...",
+                    contradictions.stream().map(r -> "(" + r.left + "," + r.right + ")").collect(Collectors.joining("\n")));
             pr.removeAll(contradictions);
         }
-        // <DEBUG>
-        System.out.println("Priority relations:");
-        pr.forEach(r -> System.out.print("(" + r.left + "," + r.right + ")" + " "));
-        System.out.println();
-        // </DEBUG>
+        if (!pr.isEmpty()) {
+            logger.atInfo().log("Priority relation:\n%s",
+                    pr.stream().map(r -> "(" + r.left + "," + r.right + ")").collect(Collectors.joining("\n")));
+        } else {
+            logger.atInfo().log("Priority relation is empty");
+        }
         TransitionPriorityComputer transitionPriorityComputer = new TransitionPriorityComputerImpl();
         return transitionPriorityComputer.compute(pr, transitions);
     }

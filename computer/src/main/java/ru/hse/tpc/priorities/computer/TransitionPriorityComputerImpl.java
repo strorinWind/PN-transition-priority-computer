@@ -1,11 +1,15 @@
 package ru.hse.tpc.priorities.computer;
 
+import com.google.common.flogger.FluentLogger;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import ru.hse.tpc.common.Transition;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TransitionPriorityComputerImpl implements TransitionPriorityComputer {
+
+    private final static FluentLogger logger = FluentLogger.forEnclosingClass();
 
     private enum  Mark {
         TEMP,
@@ -20,11 +24,8 @@ public class TransitionPriorityComputerImpl implements TransitionPriorityCompute
             graph.computeIfAbsent(relation.left, t -> new HashSet<>()).add(relation.right);
         }
         Collection<Transition> sorted = sort(graph);
-        // <DEBUG>
-        System.out.println("Transitions sorted by priority relation:");
-        sorted.forEach(t -> System.out.print(t + " "));
-        System.out.println();
-        // </DEBUG>
+        logger.atInfo().log("Transitions sorted by priority relation: %s",
+                sorted.stream().map(Transition::toString).collect(Collectors.joining(" << ")));
         Map<Transition, Integer> result = new HashMap<>(transitions.size());
         int priorityVal = 1;
         for (Transition t : sorted) {

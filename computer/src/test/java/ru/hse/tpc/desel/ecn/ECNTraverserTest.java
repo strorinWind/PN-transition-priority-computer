@@ -10,14 +10,13 @@ import ru.hse.tpc.desel.cg.CGBuilder;
 import ru.hse.tpc.desel.cg.CGBuilderSingleThreaded;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class ECNTraverserParallelTest {
+public class ECNTraverserTest {
 
     private Map<Marking, List<ImmutablePair<Transition, Marking>>> cg;
     private ECNMarking initialMarking;

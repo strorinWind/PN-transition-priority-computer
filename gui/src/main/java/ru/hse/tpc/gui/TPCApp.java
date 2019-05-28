@@ -32,10 +32,6 @@ public class TPCApp extends Application {
 
         stage.setTitle("TPC 1.1");
 
-        double width = 1000;
-        double height = 600;
-
-        //Scene scene = new Scene(decorator, width, height);
         Scene scene = new Scene(decorator);
         final ObservableList<String> stylesheets = scene.getStylesheets();
         stylesheets.addAll(TPCApp.class.getResource("/css/jfoenix-fonts.css").toExternalForm(),

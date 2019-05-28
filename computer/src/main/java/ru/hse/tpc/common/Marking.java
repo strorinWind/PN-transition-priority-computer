@@ -63,6 +63,13 @@ public class Marking implements Iterable<Integer> {
         return Optional.of(result);
     }
 
+    /**
+     * Compares this non-generalized marking to that non-generalized marking to check if this is strictly covered
+     * by that.
+     * Note: the both markings should be non-generalized, since generalized places are not accounted for.
+     * @param thatM - non-generalized marking
+     * @return - true, if this is strictly covered by that
+     */
     public boolean isStrictlyCoveredBy(Marking thatM) {
         boolean isAtLeastOnePlaceStrictlyCovered = false;
         for (int i = 0; i < this.marking.length; i++) {

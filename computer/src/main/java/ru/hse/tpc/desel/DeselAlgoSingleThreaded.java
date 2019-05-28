@@ -1,5 +1,6 @@
 package ru.hse.tpc.desel;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import ru.hse.tpc.desel.cg.CGBuilder;
 import ru.hse.tpc.desel.cg.CGBuilderSingleThreaded;
@@ -50,6 +51,11 @@ public class DeselAlgoSingleThreaded extends AbstractDeselAlgo {
         ECNTraverser ecnTraverser = new ECNTraverserImpl();
         return ecnTraverser.findCyclicRuns(cg, new ECNMarking(initialMarking, additionalPlacesMarking),
                 new HashSet<>(transitions));
+    }
+
+    @Override
+    public List<CyclicRun> findCyclicRuns(List<Transition> transitions, Marking initialMarking, int limit) {
+        throw new NotImplementedException("Not implemented");
     }
 
 }

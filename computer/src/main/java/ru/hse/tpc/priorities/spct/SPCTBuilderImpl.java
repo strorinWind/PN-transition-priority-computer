@@ -1,5 +1,6 @@
 package ru.hse.tpc.priorities.spct;
 
+import com.google.common.flogger.FluentLogger;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import ru.hse.tpc.common.Marking;
 import ru.hse.tpc.common.Transition;
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
 
 public class SPCTBuilderImpl implements SPCTBuilder {
 
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+
     @Override
     public SpineTreeNode build(SpineTreeNode root, List<Transition> transitions) {
         Set<Marking> markingsInTree = new HashSet<>();
@@ -19,10 +22,12 @@ public class SPCTBuilderImpl implements SPCTBuilder {
         // markings in the tree to the set
         Deque<SpineTreeNode> preProcessingQ = new LinkedList<>();
         preProcessingQ.addFirst(root);
+        int treeSize = 1;
         while (!preProcessingQ.isEmpty()) {
             SpineTreeNode node = preProcessingQ.removeFirst();
             if (node.isLeaf()) {
                 node.color(NodeColor.GREEN);
+                treeSize++;
             } else {
                 nodesToColor.push(node);
                 node.getChildNodes().forEach(preProcessingQ::addLast);
@@ -32,6 +37,7 @@ public class SPCTBuilderImpl implements SPCTBuilder {
         // Process not colored nodes according to the algorithm
         while (!nodesToColor.isEmpty()) {
             SpineTreeNode node = nodesToColor.pop();
+            treeSize++;
             List<SpineTreeNode> newNodes = transitions.stream()
                     .filter(t -> !node.containsOutgoingTransition(t))
                     .filter(t -> t.canOccur(node.getM()))
@@ -49,6 +55,7 @@ public class SPCTBuilderImpl implements SPCTBuilder {
             node.color(NodeColor.YELLOW);
         }
 
+        logger.atInfo().log("Spined-based coverability tree size: %d nodes", treeSize);
         return root;
     }
 
