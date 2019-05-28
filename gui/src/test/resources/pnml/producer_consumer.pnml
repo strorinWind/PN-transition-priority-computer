@@ -1,0 +1,140 @@
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+ <net id="n-220E-3F432-0" type ="http://www.pnml.org/version-2009/grammar/ptnet">
+  <name>
+   <text>producer_consumer</text>
+  </name>
+ <page id="g-220E-3F43E-1">
+  <place id="p-220E-3F440-2">
+  <name>
+   <text>S1</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+  </name>
+   <initialMarking>
+    <text>1</text>
+   </initialMarking>
+   <graphics>
+    <position x="115" y="50"/>
+   </graphics>
+  </place>
+  <place id="p-220E-3F448-3">
+  <name>
+   <text>S2</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="115" y="225"/>
+   </graphics>
+  </place>
+  <place id="p-220E-3F44E-4">
+  <name>
+   <text>S3</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="305" y="140"/>
+   </graphics>
+  </place>
+  <place id="p-220E-3F451-5">
+  <name>
+   <text>S4</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+  </name>
+   <initialMarking>
+    <text>1</text>
+   </initialMarking>
+   <graphics>
+    <position x="500" y="50"/>
+   </graphics>
+  </place>
+  <place id="p-220E-3F453-6">
+  <name>
+   <text>S5</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="500" y="225"/>
+   </graphics>
+  </place>
+  <transition id="t-220E-3F456-7">
+  <name>
+   <text>a</text>
+    <graphics>
+     <offset x="0" y="0" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="25" y="140"/>
+   </graphics>
+  </transition>
+  <transition id="t-220E-3F45C-8">
+  <name>
+   <text>b</text>
+    <graphics>
+     <offset x="0" y="0" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="205" y="140"/>
+   </graphics>
+  </transition>
+  <transition id="t-220E-3F45F-9">
+  <name>
+   <text>c</text>
+    <graphics>
+     <offset x="0" y="0" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="410" y="140"/>
+   </graphics>
+  </transition>
+  <transition id="t-220E-3F462-10">
+  <name>
+   <text>d</text>
+    <graphics>
+     <offset x="0" y="0" />
+    </graphics>
+  </name>
+   <graphics>
+    <position x="590" y="140"/>
+   </graphics>
+  </transition>
+  <arc id="e-220E-3F465-11" source="t-220E-3F462-10" target="p-220E-3F451-5">
+  </arc>
+  <arc id="e-220E-3F467-12" source="p-220E-3F440-2" target="t-220E-3F45C-8">
+  </arc>
+  <arc id="e-220E-3F46A-13" source="p-220E-3F453-6" target="t-220E-3F462-10">
+  </arc>
+  <arc id="e-220E-3F46C-14" source="t-220E-3F45F-9" target="p-220E-3F453-6">
+  </arc>
+  <arc id="e-220E-3F46D-15" source="p-220E-3F451-5" target="t-220E-3F45F-9">
+  </arc>
+  <arc id="e-220E-3F46F-16" source="p-220E-3F44E-4" target="t-220E-3F45F-9">
+   <inscription>
+    <text>2</text>
+    <graphics>
+     <offset x="0" y="-10" />
+    </graphics>
+   </inscription>
+  </arc>
+  <arc id="e-220E-3F471-17" source="t-220E-3F45C-8" target="p-220E-3F44E-4">
+  </arc>
+  <arc id="e-220E-3F473-18" source="t-220E-3F456-7" target="p-220E-3F440-2">
+  </arc>
+  <arc id="e-220E-3F474-19" source="p-220E-3F448-3" target="t-220E-3F456-7">
+  </arc>
+  <arc id="e-220E-3F475-20" source="t-220E-3F45C-8" target="p-220E-3F448-3">
+  </arc>
+ </page>
+ </net>
+</pnml>
