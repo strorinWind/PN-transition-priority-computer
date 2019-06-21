@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface DeselAlgo {
 
+    int UNLIMITED = -1;
+
     /**
      * Find all feasible cycles
      * @param transitions - list of transitions

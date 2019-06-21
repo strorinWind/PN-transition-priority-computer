@@ -38,7 +38,7 @@ public class DeselAlgoParallel extends AbstractDeselAlgo {
 
     @Override
     public List<CyclicRun> findCyclicRuns(List<Transition> transitions, Marking initialMarking) {
-        return findCyclicRuns(transitions, initialMarking, ECNTraverserBacktracking.UNLIMITED);
+        return findCyclicRuns(transitions, initialMarking, UNLIMITED);
     }
 
     @Override

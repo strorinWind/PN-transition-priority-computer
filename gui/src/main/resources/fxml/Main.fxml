@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.validation.IntegerValidator?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
@@ -30,7 +32,16 @@
                         </StackPane>
                     </HBox>
                     <Separator/>
-                    <VBox VBox.vgrow="ALWAYS" spacing="20">
+                    <VBox VBox.vgrow="ALWAYS" spacing="30">
+                        <VBox  prefWidth="170" maxWidth="170">
+                            <JFXTextField id="cyclicRunsLimit" promptText="Cyclic runs search limit" labelFloat="true">
+                                <validators>
+                                    <IntegerValidator>
+                                        <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                                    </IntegerValidator>
+                                </validators>
+                            </JFXTextField>
+                        </VBox>
                         <StackPane fx:id="cyclicRunsCheckboxContainer" prefHeight="50" VBox.vgrow="ALWAYS"
                                    style="-fx-font-size:16px;">
                             <Label fx:id="cyclicRunsPlaceholder">No cyclic runs detected</Label>
