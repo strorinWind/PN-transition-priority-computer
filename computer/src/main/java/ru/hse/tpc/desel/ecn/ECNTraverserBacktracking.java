@@ -9,9 +9,9 @@ import ru.hse.tpc.common.Transition;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ECNTraverserBacktracking extends ECNTraverserImpl {
+import static ru.hse.tpc.desel.DeselAlgo.UNLIMITED;
 
-    public static final int UNLIMITED = -1;
+public class ECNTraverserBacktracking extends ECNTraverserImpl {
 
     @Override
     public List<CyclicRun> findCyclicRuns(Map<Marking, List<ImmutablePair<Transition, Marking>>> cg,

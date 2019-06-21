@@ -1,9 +1,6 @@
 package ru.hse.tpc.gui.controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXProgressBar;
-import com.jfoenix.controls.JFXSpinner;
+import com.jfoenix.controls.*;
 import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
@@ -56,6 +53,11 @@ public class MainController {
     @FXML
     private Label fileImportState;
     @FXML
+    private JFXTextField cyclicRunsLimit;
+
+    private boolean isRunsLimitValid;
+
+    @FXML
     private StackPane cyclicRunsCheckboxContainer;
     @FXML
     private Label cyclicRunsPlaceholder;
@@ -78,6 +80,7 @@ public class MainController {
     public void init() {
         setupConsole();
         setupImportFileButton();
+        setupCyclicRunsLimit();
         setupRepeatSearchBtn();
         setupComputePrioritiesBtn();
     }
@@ -153,6 +156,14 @@ public class MainController {
         };
     }
 
+    private void setupCyclicRunsLimit() {
+        cyclicRunsLimit.focusedProperty().addListener((o, oldVla, newVal) -> {
+            if (!newVal) {
+                isRunsLimitValid = cyclicRunsLimit.validate();
+            }
+        });
+    }
+
     private void setupRepeatSearchBtn() {
         checkBoxContainer = new VBox();
         checkBoxContainer.setSpacing(20);
@@ -175,12 +186,22 @@ public class MainController {
         spinner.setRadius(13);
         spinner.getStyleClass().add("blue-spinner");
         repeatSearchBtn.setOnAction((a) -> {
-            if (petriNet != null) {
+            if (petriNet != null && isRunsLimitValid) {
+                int limit = DeselAlgo.UNLIMITED;
+                if (!cyclicRunsLimit.textProperty().getValueSafe().isEmpty()) {
+                    int l = Integer.parseInt(cyclicRunsLimit.textProperty().getValue());
+                    if (l > 0) {
+                        limit = l;
+                        consolelog("Cyclic runs search limit: " + cyclicRunsLimit.textProperty().getValue());
+                    } else {
+                        errorlog("Cyclic runs search limit <= 0. Fallback to unlimited search.");
+                    }
+                }
                 consolelog("Searching for cyclic runs...");
                 repeatSearchBtn.setDisable(true);
                 cyclicRunsCheckboxContainer.getChildren().setAll(spinner);
 
-                Task<List<CyclicRun>> searcher = createSearcher(petriNet.getTransitions(), petriNet.getMarking());
+                Task<List<CyclicRun>> searcher = createSearcher(petriNet.getTransitions(), petriNet.getMarking(), limit);
                 searcher.messageProperty().addListener((o, oldVal, newVal) -> {
                     List<CyclicRun> cyclicRuns;
                     try {
@@ -210,6 +231,8 @@ public class MainController {
                     repeatSearchBtn.setDisable(false);
                 });
                 executorService.execute(searcher);
+            } else if (!isRunsLimitValid) {
+                errorlog("Invalid value for cyclic runs limit");
             } else {
                 errorlog("No file imported");
             }
@@ -278,12 +301,12 @@ public class MainController {
         return jfxButton;
     }
 
-    private Task<List<CyclicRun>> createSearcher(List<Transition> transitions, Marking marking) {
+    private Task<List<CyclicRun>> createSearcher(List<Transition> transitions, Marking marking, int limit) {
         return new Task<List<CyclicRun>>() {
             @Override
             protected List<CyclicRun> call() throws Exception {
                 try {
-                    List<CyclicRun> cyclicRuns = deselAlgo.findCyclicRuns(transitions, marking, 20);
+                    List<CyclicRun> cyclicRuns = deselAlgo.findCyclicRuns(transitions, marking, limit);
                     updateMessage("SEARCH FINISHED");
                     return cyclicRuns;
                 } catch (Exception e) {
