@@ -25,11 +25,11 @@ public class PNMLToInnerModelMapper {
             PageHLAPI pageHLAPI = petriNetHLAPI.getPagesHLAPI().get(0);
             return Either.right(map(pageHLAPI));
         } catch (ImportException | InvalidIDException e) {
-            return Either.left("Failed to import from file: " + pnmlFile.getName());
+            return Either.left("Failed to import from file: " + pnmlFile.getName() + " " + e.getMessage());
         } catch (ClassCastException e) {
             return Either.left("Unsupported Petri net type");
         } catch (Exception e) {
-            return Either.left("Error during processing pnml: " + e.getMessage());
+            return Either.left("Error during processing pnml: " + e.toString() + Arrays.toString(e.getStackTrace()));
         }
     }
 

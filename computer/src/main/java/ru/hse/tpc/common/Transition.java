@@ -25,6 +25,13 @@ public class Transition {
     public Transition(@JsonProperty("label") String label,
                       @JsonProperty("preList") List<Pair<Integer, Integer>> preList,
                       @JsonProperty("postList") List<Pair<Integer, Integer>> postList) {
+        if (preList == null) {
+            preList = new ArrayList<>();
+        }
+        if (postList == null) {
+            postList = new ArrayList<>();
+        }
+        
         this.label = label;
         this.preList = preList;
         Map<Integer, Integer> postMap = postList.stream().collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
