@@ -16,6 +16,13 @@
         <pnml.version>2.2.12</pnml.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>spring</id>
+            <url>https://dl.bintray.com/jerady/maven/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>ru.hse</groupId>
