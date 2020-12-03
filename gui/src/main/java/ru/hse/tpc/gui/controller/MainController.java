@@ -9,15 +9,21 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
+import javafx.embed.swing.JFXPanel;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.fx_viewer.FxViewPanel;
+import org.graphstream.ui.fx_viewer.FxViewer;
+import org.graphstream.ui.javafx.FxGraphRenderer;
+import org.graphstream.ui.view.ViewerPipe;
 import ru.hse.tpc.PetriNet;
 import ru.hse.tpc.common.CyclicRun;
 import ru.hse.tpc.common.Marking;
@@ -28,12 +34,16 @@ import ru.hse.tpc.pnml.PNMLToInnerModelMapper;
 import ru.hse.tpc.priorities.PrioritiesComputationAlgo;
 
 import javax.annotation.PostConstruct;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ViewController(value = "/fxml/Main.fxml")
@@ -106,6 +116,7 @@ public class MainController {
 
     private void setupImportFileButton() {
         final Stage stage = (Stage) context.getRegisteredObject("Stage");
+
         final JFXProgressBar progressBar = new JFXProgressBar(0);
         progressBar.getStyleClass().add("custom-jfx-progress-bar-stroke");
         importFileBtn.setOnAction((a) -> {
@@ -164,6 +175,43 @@ public class MainController {
         });
     }
 
+    private void showPicture() {
+        System.setProperty("org.graphstream.ui", "javafx");
+
+        Graph graph = new MultiGraph("Clicks");
+
+        graph.addNode("A");
+        graph.addNode("B");
+        graph.addNode("C");
+        graph.addEdge("AB", "A", "B");
+        graph.addEdge("BC", "B", "C");
+        graph.addEdge("CA", "C", "A");
+
+        FxViewer viewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        ViewerPipe pipeIn = viewer.newViewerPipe();
+
+        FxViewPanel panel = (FxViewPanel)viewer.addDefaultView(false, new FxGraphRenderer());
+
+        pipeIn.addAttributeSink(graph);
+        pipeIn.pump();
+
+        pipeIn.pump();
+        Pane mainPane = new Pane(panel);
+
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        Scene scene = new Scene(mainPane, 800, 600);
+
+        JFXPanel p = new JFXPanel();
+        p.setScene(scene);
+
+        frame.setContentPane(p);
+        frame.pack();
+        frame.setVisible(true);
+
+        panel.getViewer().enableAutoLayout();
+    }
+
     private void setupRepeatSearchBtn() {
         checkBoxContainer = new VBox();
         checkBoxContainer.setSpacing(20);
@@ -176,11 +224,13 @@ public class MainController {
         btnsContainer.setSpacing(15);
         JFXButton selectAll = getCheckBoxControlBtn("Select All");
         JFXButton deselectAll = getCheckBoxControlBtn("Deselect All");
+        JFXButton showPicture = getCheckBoxControlBtn("Show Picture");
 
         selectAll.setOnAction((a) -> checkBoxContainer.getChildren().forEach(n -> ((JFXCheckBox) n).setSelected(true)));
         deselectAll.setOnAction((a) -> checkBoxContainer.getChildren().forEach(n -> ((JFXCheckBox) n).setSelected(false)));
+        showPicture.setOnAction((a) -> showPicture());
 
-        btnsContainer.getChildren().setAll(selectAll, deselectAll);
+        btnsContainer.getChildren().setAll(selectAll, deselectAll, showPicture);
         spAndBtnsContainer.getChildren().setAll(btnsContainer, scrollPane);
 
         spinner.setRadius(13);

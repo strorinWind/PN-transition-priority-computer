@@ -15,6 +15,7 @@ public class TPCApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
+        System.setProperty("org.graphstream.ui", "javafx");
     }
 
     @Override
