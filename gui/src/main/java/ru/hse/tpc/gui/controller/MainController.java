@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ViewController(value = "/fxml/Main.fxml")
@@ -178,11 +177,13 @@ public class MainController {
     private void showPicture() {
         System.setProperty("org.graphstream.ui", "javafx");
 
-        Graph graph = new MultiGraph("Clicks");
+        MultiGraph graph = new MultiGraph("Clicks");
 
         graph.addNode("A");
         graph.addNode("B");
         graph.addNode("C");
+        graph.getNode("A").setAttribute("ui.style", "shape: box; size: 30px, 30px;");
+//        graph.getNode("A").setAttribute("ui.style", "fill-color: rgb(0,100,255);");
         graph.addEdge("AB", "A", "B");
         graph.addEdge("BC", "B", "C");
         graph.addEdge("CA", "C", "A");
