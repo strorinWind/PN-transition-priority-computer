@@ -19,7 +19,6 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.javafx.FxGraphRenderer;
@@ -30,12 +29,12 @@ import ru.hse.tpc.common.Marking;
 import ru.hse.tpc.common.Transition;
 import ru.hse.tpc.desel.DeselAlgo;
 import ru.hse.tpc.desel.DeselAlgoParallel;
+import ru.hse.tpc.gui.graph.GraphDisplay;
 import ru.hse.tpc.pnml.PNMLToInnerModelMapper;
 import ru.hse.tpc.priorities.PrioritiesComputationAlgo;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -177,16 +176,7 @@ public class MainController {
     private void showPicture() {
         System.setProperty("org.graphstream.ui", "javafx");
 
-        MultiGraph graph = new MultiGraph("Clicks");
-
-        graph.addNode("A");
-        graph.addNode("B");
-        graph.addNode("C");
-        graph.getNode("A").setAttribute("ui.style", "shape: box; size: 30px, 30px;");
-//        graph.getNode("A").setAttribute("ui.style", "fill-color: rgb(0,100,255);");
-        graph.addEdge("AB", "A", "B");
-        graph.addEdge("BC", "B", "C");
-        graph.addEdge("CA", "C", "A");
+        Graph graph = new GraphDisplay(petriNet).createGraphFromNet();
 
         FxViewer viewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         ViewerPipe pipeIn = viewer.newViewerPipe();
