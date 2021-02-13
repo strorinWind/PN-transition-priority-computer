@@ -197,10 +197,11 @@ public class MainController {
         p.setScene(scene);
 
         frame.setContentPane(p);
-        frame.pack();
-        frame.setVisible(true);
 
         panel.getViewer().enableAutoLayout();
+
+        frame.pack();
+        frame.setVisible(true);
     }
 
     private void setupRepeatSearchBtn() {

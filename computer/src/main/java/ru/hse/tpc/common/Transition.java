@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,6 +71,24 @@ public class Transition {
         }
         result = 31 * result + occurrenceResult.entrySet().hashCode();
         return result;
+    }
+
+    public List<Pair<Integer, Integer>> getPreList() {
+        return preList;
+    }
+
+    public Map<Integer, Integer> getOccurrenceResult() {
+        return occurrenceResult;
+    }
+
+    @Nullable
+    public Pair<Integer, Integer> getPreList(int id) {
+        for (Pair<Integer, Integer> integerIntegerPair : preList) {
+            if (integerIntegerPair.getLeft() == id) {
+                return integerIntegerPair;
+            }
+        }
+        return null;
     }
 
     @Override
